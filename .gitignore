@@ -1,0 +1,5 @@
+.tools/
+dist/
+docs/reference/
+__pycache__/
+*.log

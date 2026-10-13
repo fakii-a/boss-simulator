@@ -1,0 +1,33 @@
+PASS short tap survives a down/up within one simulation tick
+PASS held movement remains identical at 30, 60, 144 FPS
+PASS diagonal uses twice straight duration and eight directions work
+PASS opposite keys cancel and a new axis produces a diagonal
+PASS direction changes at the next SQM without accumulated backlog
+PASS simulated latency delays both press and release
+PASS walls, obstacles and diagonal corners block movement
+PASS directional attack masks reach an adjacent SQM in all eight directions
+PASS entity collisions reserve both endpoints of an active step
+PASS no teleport: hitbox follows interpolated feet
+PASS cooldowns are independent and energy prevents invalid casts
+PASS defense, death and invulnerability require explicit configuration
+PASS swept projectile hits small targets and stops behind obstacles
+PASS hazard hits only once per pulse, with no universal immunity
+PASS stun freezes movement; slow changes the next step duration
+PASS all four boss patterns execute, including two separate combo hits
+PASS threatened movement without damage counts as a dodge
+PASS safe positioning and immunity cannot inflate dodge precision
+PASS the fatal attack is included before defeat summary
+PASS ending during an active hit records a failure; walls exclude projectile threats
+PASS short taps remain buffered during a configured gap between SQMs
+PASS full boss AI and damage remain identical at different rendering rates
+PASS practice and endless replenish boss; fight reports victory
+PASS slow motion scales the entire simulation and pause freezes it
+PASS restart clears inputs and effects while preserving session deaths
+PASS pathfinding routes around obstacles to a reachable adjacent SQM
+PASS main HUD renders and buttons hit their intended controls
+PASS calibration, controls and help pages render
+PASS calibration buttons change timing and latency
+PASS remapped gameplay keys have one action without ambiguity
+PASS performance summary renders with working restart control
+PASS pause and scaled viewport render without graphics errors
+32 tests passed
