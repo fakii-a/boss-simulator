@@ -1,7 +1,7 @@
 <<<<<<< HEAD
 # GLA Boss Fight Simulator
 
-Versão 0.1 jogável, offline, em Lua + LÖVE 11.5, para treinar passos por SQMs, posicionamento, alcance e timing. A movimentação foi aproximada pelos três vídeos fornecidos: Killer com move speed 300 e luta Alvida × Yamato. **Não é uma reprodução já calibrada de todos os sistemas do GLA.**
+Versão 0.1 jogável, offline, em Lua + LÖVE 11.5.
 
 ![Interface do simulador](docs/preview.png)
 
