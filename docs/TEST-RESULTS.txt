@@ -15,6 +15,9 @@ PASS directional attack masks reach an adjacent SQM in all eight directions
 PASS entity collisions reserve both endpoints of an active step
 PASS no teleport: hitbox follows interpolated feet
 PASS cooldowns are independent and energy prevents invalid casts
+PASS all Shanks skills freeze an in-progress step and prevent action chaining
+PASS self-stun accepts skill before movement and follows slow motion and pause
+PASS self-stun and movement resumption are identical across render rates
 PASS defense, death and invulnerability require explicit configuration
 PASS swept projectile hits small targets and stops behind obstacles
 PASS hazard hits only once per pulse, with no universal immunity
@@ -31,6 +34,8 @@ PASS slow motion scales the entire simulation and pause freezes it
 PASS restart clears inputs and effects while preserving session deaths
 PASS pathfinding routes around obstacles to a reachable adjacent SQM
 PASS supplied Shanks frames and all map textures load in the real graphics runtime
+PASS HP bars are green, energy blue and attack warnings pure red
+PASS boss sprite and supplied slash, spin, hit and projectile sequences render
 PASS adjustable zoom, walking views, attack effect and death fallback render
 PASS full-window arena and compact live HUD expose only menu and skills
 PASS training, calibration, controls and help pages render inside the menu
@@ -41,4 +46,4 @@ PASS HUD mode switches restore speed and Ctrl stays reserved for facing
 PASS performance summary renders with working restart control
 PASS pause and scaled viewport render without graphics errors
 PASS wide and tall viewports keep the arena full-window and menu clicks aligned
-43 tests passed
+48 tests passed

@@ -162,9 +162,41 @@ function T.run()
     end)
     test("cooldowns are independent and energy prevents invalid casts",function()
         local w=fresh();assert(w.player:use(w,"cut"));assert(not w.player:use(w,"spin"))
-        ticks(w,.3);assert(w.player:use(w,"spin"))
+        ticks(w,w.config.playerSkills.cut.selfStun+.02);assert(w.player:use(w,"spin"))
         assert(w.player.cooldowns.cut>0 and w.player.cooldowns.spin>0)
-        ticks(w,.5);w.player.energy=0;assert(not w.player:use(w,"shot"))
+        ticks(w,w.config.playerSkills.spin.selfStun+.02);w.player.energy=0;assert(not w.player:use(w,"shot"))
+    end)
+    test("all Shanks skills freeze an in-progress step and prevent action chaining",function()
+        for _,id in ipairs({"basic","cut","spin","shot"}) do
+            local w=fresh();w.input:enqueue("d",true,0);ticks(w,.1)
+            local x,phase=w.player.rx,w.player.step.elapsed
+            assert(w.player:use(w,id))
+            ticks(w,w.config.playerSkills[id].selfStun-.03)
+            close(w.player.rx,x);close(w.player.step.elapsed,phase)
+            assert(w.player.selfStunRemaining>0 and not w.player:use(w,"spin"))
+            assert(not Movement.start(w.player,0,1,w,w.config.movement))
+            local hp=w.player.hp;Combat.damage(w,w.boss,w.player,10);assert(w.player.hp==hp-10)
+            ticks(w,.08);assert(w.player.rx>x and w.player.selfStunRemaining==0)
+        end
+    end)
+    test("self-stun accepts skill before movement and follows slow motion and pause",function()
+        local w=fresh();w.input:enqueue("d",true,0);w.input:enqueue("2",true,0)
+        w.settings.speed=.5;w:update(.1)
+        assert(w.player.steps==0 and w.player.selfStunRemaining>0)
+        local remaining=w.player.selfStunRemaining
+        w.paused=true;w:update(.2);close(w.player.selfStunRemaining,remaining)
+        w.paused=false;w:update(.2);close(w.player.selfStunRemaining,remaining-.1)
+        w:reset(false);assert(w.player.selfStunRemaining==0 and #w.visuals==0)
+    end)
+    test("self-stun and movement resumption are identical across render rates",function()
+        local states={}
+        for _,fps in ipairs({30,60,144}) do
+            local w=fresh();w.input:enqueue("d",true,0)
+            w.input:enqueue("1",true,.1);w.input:enqueue("1",false,.11)
+            for _=1,fps*2 do w:update(1/fps) end
+            states[#states+1]=w.player
+        end
+        for i=2,#states do close(states[i].rx,states[1].rx);assert(states[i].steps==states[1].steps) end
     end)
     test("defense, death and invulnerability require explicit configuration",function()
         local w=fresh();w.player.defense=5
@@ -228,7 +260,7 @@ function T.run()
     end)
     test("ending during an active hit records a failure; walls exclude projectile threats",function()
         local w=fresh();place(w.boss,10,10);place(w.player,11,10)
-        w.boss:begin(w,"club");ticks(w,.5);w:stop("Encerrado")
+        w.boss:begin(w,"club");ticks(w,w.boss.cast.p.windup+.02);w:stop("Encerrado")
         assert(w.training.result.failures==1)
         local blocked=fresh();place(blocked.boss,3,10);place(blocked.player,12,10)
         blocked.arena.obstacles["8:10"]=true

@@ -10,7 +10,7 @@ end
 function Skill.projectile(world,owner,angle,p,attack)
     world.projectiles[#world.projectiles+1]={owner=owner,x=owner.rx,y=owner.ry,
         vx=math.cos(angle)*p.speed,vy=math.sin(angle)*p.speed,radius=p.radius,
-        remaining=p.lifetime,damage=p.damage,status=p.status,attack=attack}
+        remaining=p.lifetime,lifetime=p.lifetime,damage=p.damage,status=p.status,attack=attack}
     if attack then attack.projectiles=attack.projectiles+1 end
 end
 function Skill.angle(actor,target)
@@ -69,6 +69,9 @@ function Skill.updateEffects(world,dt)
         if wallTime then endX=p.x+(nx-p.x)*wallTime;endY=p.y+(ny-p.y)*wallTime end
         local hit=target.hp>0 and Collision.segmentCircle(p.x,p.y,endX,endY,target.rx,target.ry,p.radius+target.radius)
         if hit then Combat.damage(world,p.owner,target,p.damage,p.status,p.attack) end
+        if wallTime and not hit then
+            world:addVisual({kind="effect",style="hit",x=endX,y=endY},.22,p.owner.kind)
+        end
         p.remaining=p.remaining-dt;p.x,p.y=nx,ny
         if hit or wallTime or p.remaining<=0 then
             if p.attack then p.attack.projectiles=p.attack.projectiles-1 end
@@ -86,7 +89,11 @@ end
 function Skill.scaledBossParameters(world,id)
     local p=U.copy(world.config.bossSkills[id])
     local difficulty=world.config.training.difficultyPresets[world.settings.difficulty]
-    p.windup=p.windup*difficulty.windup;p.damage=p.damage*difficulty.damage
+    local tempo=world.config.boss.attackTimeScale or 1
+    p.windup=p.windup*difficulty.windup*tempo;p.damage=p.damage*difficulty.damage
+    p.recovery=p.recovery*tempo
+    if p.interval then p.interval=p.interval*tempo end
+    if p.speed then p.speed=p.speed/tempo;p.lifetime=p.lifetime*tempo end
     return p
 end
 return Skill

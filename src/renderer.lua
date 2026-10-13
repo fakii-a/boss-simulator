@@ -1,9 +1,10 @@
 local Animation=require("src.animation")
 local Tiles=require("src.tiles")
+local Effects=require("src.effects")
 local U=require("src.util")
 local R={};R.__index=R
 function R.new()
-    return setmetatable({player=Animation.new("player"),boss=Animation.new("boss"),tiles=Tiles.new(),
+    return setmetatable({player=Animation.new("player"),boss=Animation.new("boss"),tiles=Tiles.new(),effects=Effects.new(),
         view={x=0,y=0,w=1280,h=820}},R)
 end
 function R:camera(world)
@@ -21,7 +22,7 @@ function R:point(x,y)
 end
 function R:shape(shape,alpha,kind,outline)
     local g,s=love.graphics,self.sqm
-    local colors={warning={1,.68,.22},boss={1,.25,.3},player={.28,.83,.9},debug={1,.2,.85}}
+    local colors={warning={1,0,0},boss={1,.02,.04},player={.28,.83,.9},debug={1,.2,.85}}
     local c=colors[kind] or colors.boss
     g.setColor(c[1],c[2],c[3],alpha)
     if shape.kind=="slash" then
@@ -75,22 +76,22 @@ function R:draw(world,fonts)
     local cast=world.boss.cast
     if cast and (cast.phase=="windup" or cast.phase=="between") and (world.settings.telegraphs or world.debug) then
         if cast.shape then
-            self:shape(cast.shape,.13+math.sin(world.time*15)*.04,"warning")
-            self:shape(cast.shape,.8,"warning",true)
+            self:shape(cast.shape,.60+math.sin(world.time*15)*.08,"warning")
+            g.setLineWidth(3);self:shape(cast.shape,1,"warning",true);g.setLineWidth(1)
         else
             local x,y=self:point(world.boss.rx,world.boss.ry)
-            g.setColor(1,.68,.22,.65)
+            g.setColor(1,0,0,1);g.setLineWidth(4)
             for _,angle in ipairs(cast.angles) do
                 g.line(x,y,x+math.cos(angle)*s*8,y+math.sin(angle)*s*8)
             end
+            g.setLineWidth(1)
         end
     end
     for _,h in ipairs(world.hazards) do
         local kind=h.owner==world.player and "player" or "boss"
-        self:shape(h.shape,.25+h.remaining/h.duration*.2,kind)
+        self:shape(h.shape,(kind=="boss" and .65 or .25)+h.remaining/h.duration*.2,kind)
         self:shape(h.shape,.85,kind,true)
     end
-    for _,vis in ipairs(world.visuals) do self:shape(vis.shape,vis.remaining/vis.duration*.7,vis.kind,true) end
     objects[#objects+1]=world.player;objects[#objects+1]=world.boss
     table.sort(objects,function(a,b) return a.ry==b.ry and a.rx<b.rx or a.ry<b.ry end)
     for _,e in ipairs(objects) do
@@ -102,10 +103,10 @@ function R:draw(world,fonts)
             if world.debug then
             local width=e.kind=="boss" and 66 or 44
             g.setColor(.03,.05,.07,.85);g.rectangle("fill",x-width/2,y-s*1.6,width,5,2)
-            g.setColor(e.kind=="boss" and .94 or .27,e.kind=="boss" and .38 or .83,e.kind=="boss" and .4 or .65)
+            g.setColor(.20,.78,.28)
             g.rectangle("fill",x-width/2,y-s*1.6,width*e.hp/e.maxHp,5,2)
             g.setFont(fonts.tiny);g.setColor(.85,.91,.88)
-            g.printf(e.kind=="boss" and "ALVIDA · ESTIMADO" or "SHANKS",x-95,y-s*1.6-16,190,"center")
+            g.printf(e.kind=="boss" and "BOSS DE TREINO" or "SHANKS",x-95,y-s*1.6-16,190,"center")
             end
             if e.status.slow then g.setColor(.55,.77,1);g.print("LENTO",x-20,y+6) end
             if world.debug then
@@ -117,13 +118,13 @@ function R:draw(world,fonts)
         end
         end
     end
+    for _,vis in ipairs(world.visuals) do
+        if vis.shape.kind=="effect" then self.effects:draw(self,vis)
+        else self:shape(vis.shape,vis.remaining/vis.duration*.7,vis.kind,true) end
+    end
     for _,p in ipairs(world.projectiles) do
         local x,y=self:point(p.x,p.y)
-        local angle=math.atan2(p.vy,p.vx)
-        g.push();g.translate(x,y);g.rotate(angle+world.time*14)
-        if p.owner==world.player then g.setColor(.4,.91,1) else g.setColor(1,.52,.33) end
-        g.polygon("fill",-s*.22,0,0,-s*.12,s*.22,0,0,s*.12)
-        g.pop()
+        self.effects:projectile(self,p)
         if world.debug then g.setColor(1,.2,.85);g.circle("line",x,y,p.radius*s) end
     end
     g.setFont(fonts.body)

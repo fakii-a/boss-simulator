@@ -29,6 +29,7 @@ function Combat.damage(world,source,target,amount,status,attack)
     damage=math.min(target.hp,damage)
     target.hp=math.max(0,target.hp-damage)
     target.flash=.14
+    world:addVisual({kind="effect",style="hit",x=target.rx,y=target.ry},.22,source.kind)
     Combat.status(target,status)
     if attack then attack.hit=true;attack.threatened=true end
     local stats=world.training.stats

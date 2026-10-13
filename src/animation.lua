@@ -55,7 +55,7 @@ function Animation:draw(e,x,y,sqm,time)
         local selected=frames[index]
         g.draw(self.frameImages[selected],self.quads[selected],x,y,0,scale,sy,ox,oy)
         if e.hp>0 then
-            color(.3,.9,.9,.8)
+            if self.kind=="boss" then color(1,.05,.08,.9) else color(.3,.9,.9,.8) end
             g.circle("line",x,y,sqm*.26)
             -- This small marker exposes diagonal facing even with cardinal artwork.
             local length=math.sqrt(e.faceX^2+e.faceY^2)

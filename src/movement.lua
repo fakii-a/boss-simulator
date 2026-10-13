@@ -6,7 +6,7 @@ function Movement.initialize(e,x,y)
     e.walkPhase,e.steps=0,0
 end
 function Movement.start(e,dx,dy,world,settings)
-    if e.step or e.gap>1e-9 or e.hp<=0 or (e.status.stun or 0)>0 then return false end
+    if e.step or e.gap>1e-9 or e.hp<=0 or (e.status.stun or 0)>0 or (e.selfStunRemaining or 0)>1e-9 then return false end
     if dx==0 and dy==0 then return false end
     e.faceX,e.faceY=dx,dy
     if not world.arena:canStep(e,dx,dy,world.entities,settings.blockDiagonalCorners) then return false end

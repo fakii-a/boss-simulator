@@ -30,6 +30,8 @@ function Boss:begin(world,id)
 end
 function Boss:execute(world,cast)
     cast.pulse=cast.pulse+1
+    world:addVisual({kind="effect",style=cast.id=="volley" and "shot" or "impact",
+        x=self.rx,y=self.ry,dx=self.faceX,dy=self.faceY,area=cast.shape},.38,"boss")
     if cast.id=="volley" then
         for _,angle in ipairs(cast.angles) do Skill.projectile(world,self,angle,cast.p,cast.attack) end
     else Skill.hazard(world,self,cast.shape,cast.p,cast.attack) end
@@ -50,7 +52,7 @@ function Boss:updateCast(dt,world)
         self.state="recovery";cast.attack.done=true
     else
         self.cast=nil;self.state="idle"
-        self.timer=world.config.boss.betweenSkills/world.settings.frequency
+        self.timer=world.config.boss.betweenSkills*(world.config.boss.attackTimeScale or 1)/world.settings.frequency
     end
 end
 function Boss:update(dt,world)

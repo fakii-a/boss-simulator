@@ -12,7 +12,7 @@ game_files=[root/name for name in ['main.lua','conf.lua','config.lua']]
 for directory in ['src','data','assets','tests']:
     game_files.extend(p for p in (root/directory).rglob('*') if p.is_file())
 game_files+= [root/'README.md',root/'docs/REFERENCIAS.md',root/'docs/VALIDACAO.md',
-              root/'docs/TEST-RESULTS.txt',root/'docs/preview.png',root/'docs/menu-preview.png']
+              root/'docs/TEST-RESULTS.txt',root/'docs/preview.png',root/'docs/menu-preview.png',root/'docs/skill-preview.png']
 game_files=sorted(game_files)
 love_path=dist/'GLA-Boss-Fight-Simulator.love'
 with zipfile.ZipFile(love_path,'w',zipfile.ZIP_DEFLATED) as z:
@@ -40,6 +40,7 @@ with zipfile.ZipFile(portable,'w',zipfile.ZIP_DEFLATED) as z:
     z.write(root/'docs/TEST-RESULTS.txt',prefix+'docs/TEST-RESULTS.txt')
     z.write(root/'docs/preview.png',prefix+'docs/preview.png')
     z.write(root/'docs/menu-preview.png',prefix+'docs/menu-preview.png')
+    z.write(root/'docs/skill-preview.png',prefix+'docs/skill-preview.png')
 
 manifest={}
 for artifact in [love_path,source_path,portable]:

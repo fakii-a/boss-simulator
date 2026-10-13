@@ -3,7 +3,7 @@ local Hud=require("src.hud")
 local Renderer=require("src.renderer")
 local U=require("src.util")
 local world,hud,renderer,screenScale
-local testMode,captureMode,captureFrames,captureMenu=false,false,0,false
+local testMode,captureMode,captureFrames,captureMenu,captureSkill=false,false,0,false,false
 local function loadConfig(saved)
     package.loaded.config=nil
     local c=require("config")
@@ -40,6 +40,7 @@ function love.load(args)
         if arg=="--test" then testMode=true end
         if arg=="--capture" then captureMode=true end
         if arg=="--capture-menu" then captureMode=true;captureMenu=true end
+        if arg=="--capture-skill" then captureMode=true;captureSkill=true end
     end
     if testMode then
         local ok,report=pcall(function() return require("tests.run").run() end)
@@ -72,10 +73,19 @@ function love.update(dt)
     world:update(dt)
     if captureMode then
         captureFrames=captureFrames+1
+        if captureSkill and captureFrames==88 then
+            world:reset(false)
+            require("src.movement").initialize(world.player,9,10)
+            require("src.movement").initialize(world.boss,12,10)
+            world.player.faceX,world.player.faceY=1,0
+            world.boss:begin(world,"fan");world.player:use(world,"cut")
+            for _=1,27 do world:tick(world.config.simulation.tick) end
+        end
         if captureFrames==90 then
             love.graphics.captureScreenshot(function(data)
                 local png=data:encode("png")
-                local file=assert(io.open(love.filesystem.getSource().."/docs/"..(captureMenu and "menu-preview.png" or "preview.png"),"wb"))
+                local name=captureMenu and "menu-preview.png" or captureSkill and "skill-preview.png" or "preview.png"
+                local file=assert(io.open(love.filesystem.getSource().."/docs/"..name,"wb"))
                 file:write(png:getString());file:close();love.event.quit()
             end)
         end

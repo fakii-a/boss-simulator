@@ -1,16 +1,18 @@
 # GLA Boss Fight Simulator
 
-<<<<<<< HEAD
-Versão 0.3 jogável, offline, em Lua + LÖVE 11.5, com Shanks e cenário usando PNGs fornecidos pelo usuário. Arena ocupa toda a janela, com HUD compacto, contador de FPS e menu no Esc. Câmera com zoom 1,6×, Ctrl + direção para girar e retorno a 1× ao sair de Slow Motion. A movimentação mantém a calibração aproximada dos vídeos do Killer com move speed 300; essa velocidade não foi confirmada para Shanks.
-=======
-Versão 0.1 jogável, offline, em Lua + LÖVE 11.5.
->>>>>>> 9f5342e9e239ed9b0c20c88b2684cfe93fd52dcc
+Versão 0.4 jogável, offline, em Lua + LÖVE 11.5. HP verde, energia azul, avisos de ataque em vermelho intenso, self-stun nas habilidades e sprites fornecidas para Shanks, boss, cenário e efeitos. Arena ocupa toda a janela, com HUD compacto, contador de FPS e menu no Esc. A movimentação mantém a calibração aproximada dos vídeos do Killer com move speed 300; essa velocidade não foi confirmada para Shanks.
 
 ![Interface do simulador](docs/preview.png)
 
 Durante a luta aparecem HP, energia, vida do boss, quatro atalhos de habilidades com cooldown e FPS. Modos, frequência, dificuldade, estatísticas, reinício e encerramento ficam na aba **Treinamento** do menu. **Esc abre e fecha o menu**, pausando a simulação enquanto estiver aberto. Tab não abre mais o menu. Calibração, remapeamento e ajuda continuam acessíveis pelas outras abas. O contador usa FPS reais de renderização, inclusive durante pausa e slow motion.
 
 ![Menu de treinamento](docs/menu-preview.png)
+
+![Corte frontal, self-stun e aviso vermelho](docs/skill-preview.png)
+
+Todas as habilidades do Shanks deixam o personagem parado desde o início da execução. A duração total está em `config.lua → playerSkills → selfStun`: básico **0,28 s**, corte frontal **0,45 s**, circular **0,65 s**, projétil **0,40 s**. São estimativas configuráveis, não tempos medidos no GLA. Um passo em andamento fica congelado na posição interpolada e continua após o bloqueio; não há teleporte. Durante o bloqueio, novas skills e mudanças de direção são recusadas; teclas de movimento mantidas pressionadas voltam a funcionar depois. O jogador continua vulnerável. Pausa e slow motion afetam o timer junto com a simulação; cooldown é independente.
+
+Efeitos animados de corte, giro, impacto e projétil usam PNGs da pasta fornecida. O boss usa uma sprite de espadachim, com os padrões de treino anteriores, ainda baseados nas aproximações de Alvida. Trocar a aparência não significa reproduzir as habilidades oficiais desse personagem. As marcações inimigas usam vermelho saturado no aviso e na execução; não há amarelo nesses avisos.
 
 ## Executar no Windows
 
@@ -107,7 +109,7 @@ São guardadas até 100 tentativas da sessão no CSV; a sessão seguinte começa
 
 `main.lua` conecta callbacks do LÖVE, carregamento de configuração e interface. `src/game.lua` coordena os ticks. `movement/input/arena/collision` cuidam dos SQMs, eventos, ocupação e geometria. `combat/skill/player/boss` implementam dano, estados, cooldowns, áreas, projéteis e IA. `training` calcula métricas. `animation/renderer/hud` desenham sem determinar resultados do combate. `data` descreve os ataques; parâmetros numéricos ficam centralizados em `config.lua`.
 
-O protótipo original foi preservado em `docs/original-main.lua`. Os PNGs selecionados da pasta fornecida estão incluídos em `assets`, sem depender da pasta Downloads durante a execução. Shanks usa três folhas 128 × 128, com quatro vistas de 64 × 64 cada; diagonais reutilizam vistas cardinais. Frames de ataque e morte não foram identificados: ataque usa efeito desenhado e morte usa a pose esmaecida. O boss permanece um placeholder. Chão, caixas e vegetação usam texturas fornecidas; a disposição da arena é própria do simulador. Veja [assets/README.md](assets/README.md) para o inventário e formato do carregador. Sprite, resolução e zoom não mudam o tamanho lógico das hitboxes.
+O protótipo original foi preservado em `docs/original-main.lua`. Os PNGs selecionados estão incluídos em `assets`, sem depender da pasta Downloads durante a execução. Shanks e boss usam três folhas 128 × 128 cada, com quatro vistas de 64 × 64; diagonais reutilizam vistas cardinais. Frames corporais específicos de ataque e morte não foram identificados: ataque combina pose e sprite de efeito; morte usa a pose esmaecida. Onze texturas de efeitos são animadas em `src/effects.lua`. Chão, caixas e vegetação usam texturas fornecidas; a disposição da arena é própria do simulador. Veja [assets/README.md](assets/README.md) para o inventário e formato do carregador. Sprite, resolução e zoom não mudam o tamanho lógico das hitboxes.
 
 ## Verificação
 

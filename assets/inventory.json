@@ -48,6 +48,90 @@
       "original": "Image_2D_6124_0071.png",
       "bytes": 2580,
       "sha256": "38267e5fdc85c339abbb18c84329bdb22245f11ce24ffd4ef5d4db20886c2d6a"
+    },
+    {
+      "file": "assets/bosses/Image_2D_1512_8212.png",
+      "original": "Image_2D_1512_8212.png",
+      "bytes": 9064,
+      "sha256": "e2acc8a79a22a2ec1cf608b92dcee0786b9b4b08f3e957b1ffcd07a9fde8dd3f"
+    },
+    {
+      "file": "assets/bosses/Image_2D_6535_9423.png",
+      "original": "Image_2D_6535_9423.png",
+      "bytes": 8880,
+      "sha256": "f8ff291aaa2f9df9b2e4728936d254de34571c8879683ec03dbbdb6e97eb1d4e"
+    },
+    {
+      "file": "assets/bosses/Image_2D_6537_9433.png",
+      "original": "Image_2D_6537_9433.png",
+      "bytes": 8892,
+      "sha256": "ade362747d7b68d0779e4f989509223b10235c5a858db7626ea2029f83b287ad"
+    },
+    {
+      "file": "assets/effects/Image_2D_1090_12279.png",
+      "original": "Image_2D_1090_12279.png",
+      "bytes": 1113,
+      "sha256": "fb4991f049c0628e9ccbb054a73c0e06c94999d29c932ab7007eda254ebedc7a"
+    },
+    {
+      "file": "assets/effects/Image_2D_1127_12285.png",
+      "original": "Image_2D_1127_12285.png",
+      "bytes": 2355,
+      "sha256": "46ef4483270166e288a3f9f3c0c5ffa011b34dacc43f05a187347a15252ed900"
+    },
+    {
+      "file": "assets/effects/Image_2D_1130_12291.png",
+      "original": "Image_2D_1130_12291.png",
+      "bytes": 2938,
+      "sha256": "65a7c027f18eb602ee37a0061b86aff0fb35d141fa8b83793e39296fed55459b"
+    },
+    {
+      "file": "assets/effects/Image_2D_1132_12296.png",
+      "original": "Image_2D_1132_12296.png",
+      "bytes": 2703,
+      "sha256": "8ffb2b4250f1a83f7bcc418169ea32c038bf974f97d95a9c15294d40bad4e495"
+    },
+    {
+      "file": "assets/effects/Image_2D_2241_10054.png",
+      "original": "Image_2D_2241_10054.png",
+      "bytes": 3291,
+      "sha256": "4f789877bfd85de5cd1d9f64c03c97ffcd7a004b50c692c554d24d945e8187a8"
+    },
+    {
+      "file": "assets/effects/Image_2D_2247_10055.png",
+      "original": "Image_2D_2247_10055.png",
+      "bytes": 3284,
+      "sha256": "15f561c2be5390658f0aa48161191104a6a9d9ed21d6685d298fb21993b015d9"
+    },
+    {
+      "file": "assets/effects/Image_2D_2266_10056.png",
+      "original": "Image_2D_2266_10056.png",
+      "bytes": 3353,
+      "sha256": "bb4c7c880a390b7f779a0255b7d48765a5e2eac7d1c84a3f96368cef33790f63"
+    },
+    {
+      "file": "assets/effects/Image_2D_2275_10057.png",
+      "original": "Image_2D_2275_10057.png",
+      "bytes": 3467,
+      "sha256": "ac9a77802509ddc79b98e79ae53de17502f66fca6a0be1e820c16a5944fc315f"
+    },
+    {
+      "file": "assets/effects/Image_2D_2283_10058.png",
+      "original": "Image_2D_2283_10058.png",
+      "bytes": 2102,
+      "sha256": "fdbd83092669603531fdfcc43a4f8079fc5f329c9a401c2743bf31e80e0d0151"
+    },
+    {
+      "file": "assets/effects/Image_2D_3187_4173.png",
+      "original": "Image_2D_3187_4173.png",
+      "bytes": 2302,
+      "sha256": "89a496f1e0d734ac2409e8dea45a741197cbf8d04e6235ee500b8ca16eccfefe"
+    },
+    {
+      "file": "assets/effects/Image_2D_3190_4182.png",
+      "original": "Image_2D_3190_4182.png",
+      "bytes": 2081,
+      "sha256": "f6fe38f3136e39e05df715ad3255b61424174e9d158334ee2ab063861bdbfe25"
     }
   ]
 }

@@ -10,11 +10,34 @@ function T.run()
     local hud,renderer=Hud.new(),Renderer.new()
     assert(renderer.player.image and not renderer.player.error,renderer.player.error)
     assert(#renderer.player.quads==12 and renderer.player.manifest.flipY)
+    assert(renderer.boss.image and not renderer.boss.error and #renderer.boss.quads==12,renderer.boss.error)
     for _,id in ipairs({"sand1","sand2","tree","bush","crate"}) do assert(renderer.tiles.images[id]) end
     results[#results+1]="PASS supplied Shanks frames and all map textures load in the real graphics runtime"
     local target=love.graphics.newCanvas(1280,820)
     love.graphics.setCanvas(target)
     renderer:draw(w,hud.fonts);hud:draw(w,renderer)
+    love.graphics.setCanvas()
+    local pixels=target:newImageData()
+    local r,g,b=pixels:getPixel(210,38);assert(g>r*2 and g>b*2)
+    r,g,b=pixels:getPixel(210,60);assert(b>r and b>g)
+    r,g,b=pixels:getPixel(780,38);assert(g>r*2 and g>b*2)
+    love.graphics.setCanvas(target)
+    renderer:shape({kind="circle",x=11,y=12,radius=.5},1,"warning")
+    local px,py=renderer:point(11,12)
+    love.graphics.setCanvas();pixels=target:newImageData()
+    r,g,b=pixels:getPixel(math.floor(px),math.floor(py));assert(r>.95 and g<.05 and b<.05)
+    love.graphics.setCanvas(target)
+    results[#results+1]="PASS HP bars are green, energy blue and attack warnings pure red"
+    for _,style in ipairs({"basic","cut","spin","shot","impact","hit"}) do
+        for _,progress in ipairs({0,.25,.5,.75,.95}) do
+            renderer.effects:draw(renderer,{shape={kind="effect",style=style,x=11,y=12,
+                dx=1,dy=0,range=3,radius=1.65,area={cells={{x=12,y=12}}}},
+                remaining=1-progress,duration=1,kind=style=="impact" and "boss" or "player"})
+        end
+    end
+    renderer.effects:projectile(renderer,{x=11,y=12,vx=8,vy=0,lifetime=2,remaining=1,owner=w.player})
+    renderer.boss:draw(w.boss,400,300,64,0)
+    results[#results+1]="PASS boss sprite and supplied slash, spin, hit and projectile sequences render"
     local originalSqm=renderer.sqm
     hud:execute("adjust:zoom:1",w,function()end);renderer:camera(w)
     assert(renderer.sqm>originalSqm and w.player.steps==0)
