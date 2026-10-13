@@ -43,8 +43,8 @@ function Hud:draw(world,renderer)
     local s=world.training.stats
     self:text("GLA",24,16,"title",colors.accent)
     self:text("BOSS FIGHT SIMULATOR",88,18,"medium")
-    self:text("TREINAMENTO OFFLINE / v0.1",88,43,"tiny",colors.muted)
-    self:text("Killer · move speed 300",24,77,"small",colors.muted)
+    self:text("TREINAMENTO OFFLINE / v0.2",88,43,"tiny",colors.muted)
+    self:text("Shanks · treino por SQMs",24,77,"small",colors.muted)
     self:text("Tempos estimados pelos vídeos · Alvida: aproximação",245,77,"small",colors.gold)
     self:bar("HP",world.player.hp,world.player.maxHp,468,19,208,22,colors.accent)
     self:bar("ENERGIA",world.player.energy,world.player.maxEnergy,468,45,208,19,{.34,.56,.91})
@@ -83,12 +83,12 @@ function Hud:draw(world,renderer)
         local cd,p=world.player.cooldowns[id] or 0,world.config.playerSkills[id]
         self:button("player:"..id,key.." · "..def.name,x,731,208,29,cd<=0 and world.player.energy>=p.energy)
         self:text(cd>0 and string.format("%.1fs",cd) or "PRONTO",x,766,"tiny",cd>0 and colors.muted or colors.accent)
-        self:text(p.energy.." energia",x,766,"tiny",colors.muted,208,"right")
+        self:text(p.energyGain and ("+"..p.energyGain.." energia / acerto") or (p.energy.." energia"),x,766,"tiny",colors.muted,208,"right")
     end
     self:button("restart","REINICIAR [R / F6]",948,720,148,34,false)
     self:button("stop","ENCERRAR",1104,720,152,34,false)
     self:button("pause",world.paused and "CONTINUAR [P]" or "PAUSAR [P]",948,764,308,31,false)
-    self:text("WASD / setas / numpad · F3 hitboxes · F5 recarrega config.lua",24,803,"tiny",colors.muted)
+    self:text("WASD / setas / numpad · Ctrl + direção: girar · F3 hitboxes · F5 recarrega config.lua",24,803,"tiny",colors.muted)
     if world.training.noticeTimer>0 then self:text(world.training.notice,renderer.view.x+20,renderer.view.y+20,"medium",colors.gold,renderer.view.w-40,"center") end
     if world.debug then
         local p=world.player;self:panel(36,583,398,109)
@@ -131,6 +131,10 @@ function Hud:drawMenu(world)
             self:button("adjust:"..row[1]..":1","+",980,y,38,32,false)
         end
         self:button("camera",world.config.camera.follow and "Câmera: acompanha jogador" or "Câmera: arena fixa",200,591,305,32,world.config.camera.follow)
+        self:text("Zoom",650,600,"body")
+        self:button("adjust:zoom:-1","−",754,591,38,32,false)
+        self:text(string.format("%.1f×",world.config.camera.zoom),800,598,"body",colors.accent,170,"center")
+        self:button("adjust:zoom:1","+",980,591,38,32,false)
         self:text("Move speed 300: dado informado. Fórmula interna do GLA não confirmada.",200,640,"small",colors.gold)
     elseif self.page=="controls" then
         for i,action in ipairs(bindingOrder) do
@@ -139,14 +143,14 @@ function Hud:drawMenu(world)
             self:button("bind:"..action,table.concat(world.config.controls[action]," / "),x+150,y,252,34,self.rebinding==action)
         end
         self:text(self.rebinding and ("Pressione a nova tecla para "..bindingNames[self.rebinding]..". Esc cancela.") or "Clique num comando e pressione uma tecla. Aliases secundários ficam disponíveis.",200,635,"small",colors.gold)
-        self:text("Reservadas: Tab, Esc, F1–F7. Teclas opostas se cancelam; diagonais aceitam duas teclas.",200,659,"tiny",colors.muted)
+        self:text("Ctrl + direção gira sem caminhar. Reservadas: Ctrl, Tab, Esc, F1–F7. Opostas se cancelam.",200,659,"tiny",colors.muted)
     else
         local paragraphs={
             "MOVIMENTO · Passo reto 1/3 s e diagonal 2/3 s são estimativas do vídeo do Killer com move speed 300. A simulação usa ticks de 1/120 s e não aplica aceleração ou stamina.",
             "ALVIDA · Clava e marca em leque têm referência visual. Tempos, dano e área ainda são aproximações. Clava dupla é provisória. Projéteis são exercício demonstrativo disponível no treino individual.",
             "ESQUIVA · Sucesso: um padrão ameaçou sua hitbox durante aviso ou execução, você iniciou ao menos um passo desde o início do aviso e não recebeu nenhum acerto. Combo/projéteis contam uma vez. Acerto é falha; posicionamento seguro e imunidade ficam fora da precisão.",
             "TEMPO E DPS · Sobrevivência, cooldowns e DPS usam segundos da simulação. O CSV também registra tempo real ativo. Slow motion altera toda a simulação, inclusive movimentação e preparação.",
-            "CALIBRAÇÃO · Edite config.lua e pressione F5. Ajustes salvos ficam no diretório de dados do LÖVE. F5 e Restaurar config ignoram os valores salvos nesta sessão. Assets atuais são placeholders originais.",
+            "CALIBRAÇÃO · Edite config.lua e pressione F5. Shanks e cenário usam PNGs fornecidos. Boss é placeholder. Golpes 1–3 são exercícios de treino; tempos e hitboxes não estão calibrados para Shanks.",
         }
         for i,text in ipairs(paragraphs) do self:text(text,200,244+(i-1)*77,"small",i==2 and colors.gold or colors.text,860) end
     end
@@ -215,6 +219,7 @@ function Hud:execute(action,world,reload)
             elseif value=="gap" then m.stepGap=U.clamp(m.stepGap+delta/60,0,1)
             elseif value=="latency" then m.latencyMs=U.clamp(m.latencyMs+delta*10,0,500);world.input.latency=m.latencyMs
             elseif value=="sqm" then world.config.arena.sqm=U.clamp(world.config.arena.sqm+delta*2,24,64)
+            elseif value=="zoom" then world.config.camera.zoom=U.clamp(world.config.camera.zoom+delta*.1,.8,2.5)
             elseif value=="windup" then world.config.bossSkills.fan.windup=U.clamp(world.config.bossSkills.fan.windup+delta/60,1/60,3) end
         end
     end
@@ -222,7 +227,7 @@ end
 function Hud:rebind(key,world)
     if not self.rebinding then return false end
     if key=="escape" then self.rebinding=nil;return true end
-    if key=="tab" or key:match("^f[1-7]$") then return true end
+    if world.input:isTurnKey(key) or key=="tab" or key:match("^f[1-7]$") then return true end
     local action=self.rebinding
     for name,keys in pairs(world.config.controls) do
         if name~=action then for i=#keys,1,-1 do if keys[i]==key then table.remove(keys,i) end end end

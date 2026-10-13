@@ -9,15 +9,19 @@ function Animation.new(kind)
         local ok,manifest=pcall(function() return love.filesystem.load(path)() end)
         if ok then
             local loaded,err=pcall(function()
-                self.image=love.graphics.newImage(manifest.image)
-                self.image:setFilter("nearest","nearest")
-                self.manifest=manifest;self.quads={}
-                local w,h=self.image:getDimensions()
+                self.manifest=manifest;self.quads={};self.frameImages={}
+                for _,path in ipairs(manifest.images or {manifest.image}) do
+                local image=love.graphics.newImage(path)
+                image:setFilter("nearest","nearest")
+                self.image=self.image or image
+                local w,h=image:getDimensions()
                 assert(w%manifest.frameWidth==0 and h%manifest.frameHeight==0,"dimensões incompatíveis")
                 local cols=w/manifest.frameWidth
                 for i=0,(w/manifest.frameWidth)*(h/manifest.frameHeight)-1 do
-                    self.quads[i+1]=love.graphics.newQuad((i%cols)*manifest.frameWidth,
+                    self.quads[#self.quads+1]=love.graphics.newQuad((i%cols)*manifest.frameWidth,
                         math.floor(i/cols)*manifest.frameHeight,manifest.frameWidth,manifest.frameHeight,w,h)
+                    self.frameImages[#self.quads]=image
+                end
                 end
                 for _,rows in pairs(manifest.states) do for _,frames in pairs(rows) do
                     for _,index in ipairs(frames) do assert(self.quads[index],"frame fora da spritesheet") end
@@ -40,9 +44,23 @@ function Animation:draw(e,x,y,sqm,time)
         local frames=rows[direction] or rows[5] or rows[1]
         local index=walking and (frame-1)%#frames+1 or math.floor(time*(self.manifest.fps or 8))%#frames+1
         local scale=sqm/(self.manifest.sqmPixels or self.manifest.frameWidth)
-        color(1,1,1)
-        g.draw(self.image,self.quads[frames[index]],x,y,0,scale,scale,
-            self.manifest.originX or self.manifest.frameWidth/2,self.manifest.originY or self.manifest.frameHeight)
+        local ox=self.manifest.originX or self.manifest.frameWidth/2
+        local oy=self.manifest.originY or self.manifest.frameHeight
+        local sy=scale
+        if self.manifest.flipY then sy=-scale;oy=self.manifest.frameHeight-oy end
+        color(.02,.025,.03,.32);g.ellipse("fill",x,y,sqm*.30,sqm*.12)
+        if e.hp<=0 then color(.48,.48,.48,.55)
+        elseif e.flash and e.flash>0 then color(1,.5,.5)
+        else color(1,1,1) end
+        local selected=frames[index]
+        g.draw(self.frameImages[selected],self.quads[selected],x,y,0,scale,sy,ox,oy)
+        if e.hp>0 then
+            color(.3,.9,.9,.8)
+            g.circle("line",x,y,sqm*.26)
+            -- This small marker exposes diagonal facing even with cardinal artwork.
+            local length=math.sqrt(e.faceX^2+e.faceY^2)
+            if length>0 then g.line(x,y,x+e.faceX/length*sqm*.4,y+e.faceY/length*sqm*.4) end
+        end
         return
     end
     local boss=self.kind=="boss"

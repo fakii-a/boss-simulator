@@ -12,7 +12,8 @@ local function loadConfig(saved)
         if ok and type(p)=="table" then
             c.training=p.training or c.training;c.movement=p.movement or c.movement
             c.controls=p.controls or c.controls;c.arena.sqm=p.sqm or c.arena.sqm
-            c.camera=p.camera or c.camera;c.bossSkills=p.bossSkills or c.bossSkills
+            for key,value in pairs(p.camera or {}) do c.camera[key]=value end
+            c.bossSkills=p.bossSkills or c.bossSkills
         end
     end
     assert(c.simulation.tick>0 and c.simulation.tick<=1/30,"tick inválido")
@@ -20,6 +21,7 @@ local function loadConfig(saved)
     assert(c.training.frequency>0 and c.training.speed>0,"frequência/velocidade devem ser positivas")
     assert(c.training.difficultyPresets[c.training.difficulty],"dificuldade inválida")
     assert(c.arena.sqm>0 and c.window.scale>0,"SQM e escala devem ser positivos")
+    assert(c.camera.zoom>0,"zoom deve ser positivo")
     return c
 end
 local function reload()
@@ -51,7 +53,12 @@ function love.load(args)
     if not ok then c=loadConfig(false) end
     love.window.setMode(c.window.width,c.window.height,{resizable=true,minwidth=960,minheight=615,vsync=1})
     world=Game.new(c,U.copy(c.training));hud=Hud.new();renderer=Renderer.new()
-    if captureMode then world.settings.mode="practice";world.settings.practiceSkill="fan";world.boss:begin(world,"fan") end
+    if captureMode then
+        world.settings.mode="practice";world.settings.practiceSkill="fan"
+        require("src.movement").initialize(world.player,6,9)
+        require("src.movement").initialize(world.boss,10,8)
+        world.boss:begin(world,"fan")
+    end
     love.resize(love.graphics.getDimensions())
 end
 function love.resize(w,h)
@@ -82,7 +89,7 @@ function love.keypressed(key,scancode,isrepeat)
     if key=="escape" then
         hud:execute(world.menu and "menu" or "pause",world,reload);return
     end
-    if world.input:actionFor(key) then
+    if world.input:acceptsKey(key) then
         if not world.menu and not world.paused and not world.training.result then world.input:enqueue(key,true,world.time) end
         return
     end

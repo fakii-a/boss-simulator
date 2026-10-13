@@ -30,9 +30,11 @@ function Game:addVisual(shape,duration,kind)
     self.visuals[#self.visuals+1]={shape=shape,remaining=duration,duration=duration,kind=kind}
 end
 function Game:setMode(mode)
+    -- Finish with the old settings so the previous attempt keeps its actual mode/speed.
+    if self.training.stats.time>0 and not self.training.result then self:stop("Troca de modo") end
     self.settings.mode=mode
-    if mode=="slow" then self.settings.speed=.5 end
-    self:reset(true)
+    self.settings.speed=mode=="slow" and .5 or 1
+    self:reset(false)
 end
 function Game:tick(dt)
     if self.training.result then return end

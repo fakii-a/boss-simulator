@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 # GLA Boss Fight Simulator
 
-Versão 0.1 jogável, offline, em Lua + LÖVE 11.5, para treinar passos por SQMs, posicionamento, alcance e timing. A movimentação foi aproximada pelos três vídeos fornecidos: Killer com move speed 300 e luta Alvida × Yamato. **Não é uma reprodução já calibrada de todos os sistemas do GLA.**
+Versão 0.2 jogável, offline, em Lua + LÖVE 11.5, com Shanks e cenário usando PNGs fornecidos pelo usuário. Câmera com zoom 1,6×, Ctrl + direção para girar e retorno a 1× ao sair de Slow Motion. A movimentação mantém a calibração aproximada dos vídeos do Killer com move speed 300; essa velocidade não foi confirmada para Shanks.
 
 ![Interface do simulador](docs/preview.png)
 
@@ -24,7 +23,8 @@ Ou abra `dist\GLA-Boss-Fight-Simulator.love` com o LÖVE. O arquivo `.love` é u
 | --- | --- |
 | Movimentar | WASD, setas ou numpad 2/4/6/8 |
 | Diagonais | duas direções simultâneas; numpad 1/3/7/9 |
-| Ataque básico | Espaço; segurar repete quando disponível |
+| Girar sem andar | Ctrl esquerdo ou direito + direção; funciona com WASD, setas e numpad |
+| Haki Saber | Espaço; segurar repete quando disponível |
 | Corte frontal | 1 |
 | Corte circular | 2 |
 | Lâmina lançada | 3 |
@@ -40,9 +40,9 @@ Ou abra `dist\GLA-Boss-Fight-Simulator.love` com o LÖVE. O arquivo `.love` é u
 | Próximo padrão individual | [ ou ] |
 | Alternar velocidade / frequência | PageUp/PageDown; −/= |
 
-Todos os controles de combate e direção são configuráveis em `config.lua` ou na página **Controles** do menu Tab. Clique numa ação e pressione uma tecla. Tab, Esc e F1–F7 são reservadas à interface. R e P podem ser usados por habilidades remapeadas; nesse caso, F6 e Esc continuam disponíveis para reinício/pausa. Teclas de ação usam os nomes do LÖVE (`space`, `kp7`, `up`, etc.); não dependem do repeat do Windows.
+Todos os controles de combate e direção são configuráveis em `config.lua` ou na página **Controles** do menu Tab. Clique numa ação e pressione uma tecla. Ctrl é reservado para girar; Tab, Esc e F1–F7 são reservadas à interface. R e P podem ser usados por habilidades remapeadas; nesse caso, F6 e Esc continuam disponíveis para reinício/pausa. Teclas de ação usam os nomes do LÖVE (`space`, `kp7`, `up`, etc.); não dependem do repeat do Windows.
 
-O ataque básico procura o único boss e gira para ele; seu alcance é radial. As habilidades frontais seguem a última direção de movimento e guardam direção/área no início da preparação. Não há mira pelo mouse nesta versão. Botões da barra também executam as habilidades.
+O ataque básico procura o único boss e gira para ele; seu alcance é radial. As habilidades frontais seguem a direção definida por movimento ou Ctrl + direção e guardam direção/área no início da preparação. Ctrl durante um passo deixa o passo atual terminar e impede o próximo; não teleporta nem interrompe a interpolação. Soltar Ctrl com uma direção ainda pressionada volta a andar. Não há mira pelo mouse nesta versão. Botões da barra também executam as habilidades.
 
 ## Movimentação e calibração
 
@@ -54,13 +54,13 @@ O ataque básico procura o único boss e gira para ele; seu alcance é radial. A
 - A hitbox acompanha os pés interpolados; o sprite não define a área de dano. Não há dash, stamina ou invulnerabilidade automática no jogador padrão.
 - Latência opcional atrasa press/release e habilidades em segundos da simulação. É uma aproximação de input, não uma emulação de rede do GLA.
 
-Veja [docs/REFERENCIAS.md](docs/REFERENCIAS.md) para evidências, timestamps e limites da medição. **300 é o atributo informado pelo usuário**, não uma fórmula que converte automaticamente em pixels/s. Os 40 px/SQM renderizados são escala visual local.
+Veja [docs/REFERENCIAS.md](docs/REFERENCIAS.md) para evidências, timestamps e limites da medição. **300 é o atributo informado para Killer**, não uma fórmula que converte automaticamente em pixels/s. O SQM base de 40 px com zoom 1,6× aparece como 64 px no layout 1280 × 820; essa escolha visual não altera o tempo dos passos.
 
 No Tab → **Calibração**, ajuste passos, intervalo extra, latência, tamanho visual do SQM, preparação do leque e câmera. Em `config.lua`, também ajuste HP, energia, defesa, máscaras de alcance, hitboxes, dano, duração, cooldown, recuperação, velocidade de projéteis e rotação. A tabela `provenance` distingue dados informados, estimados e não calibrados.
 
 F5 lê `config.lua` novamente e reinicia a tentativa. O botão **Salvar ajustes** guarda overrides em `settings.lua` no diretório de dados do LÖVE; eles são aplicados no próximo início. F5 ignora overrides salvos na sessão corrente. Para persistir a restauração, pressione **Salvar ajustes** após restaurar.
 
-Janelas redimensionadas preservam o layout com escala e margens; `window.scale` modifica o zoom do mundo. `config.lua.window.width/height` controlam a resolução inicial; o layout tem referência 1280 × 820 e dimensões mínimas 960 × 615. Câmera acompanha jogador com limites da arena, ou pode ficar fixa.
+Janelas redimensionadas preservam o layout com escala e margens. Ajuste o zoom em Tab → Calibração ou em `camera.zoom` (padrão 1,6); `window.scale` é um multiplicador adicional. `config.lua.window.width/height` controlam a resolução inicial; o layout tem referência 1280 × 820 e dimensões mínimas 960 × 615. Câmera acompanha jogador com limites da arena, ou pode ficar fixa. Preferências antigas de câmera preservam o novo zoom padrão.
 
 ## Boss e padrões
 
@@ -73,11 +73,11 @@ Janelas redimensionadas preservam o layout com escala e margens; `window.scale` 
 
 A rotação padrão é clava → leque → clava → combo, **definida para o simulador, não medida como rotação oficial**. Projéteis estão disponíveis em Skill Practice e podem ser acrescentados à rotação em `config.lua`. O boss seleciona o jogador, caminha por SQMs e usa busca de caminho para contornar caixas. Preparação captura direção/área; a sequência dupla mantém a mesma área. Cooldown por habilidade e intervalo entre habilidades são independentes. A frequência do treino divide cooldowns e intervalo, mantendo preparação e execução.
 
-HP, energia, danos, defesa, recuperação e restrições de movimento não estão calibrados à progressão original. Ataques do jogador são exercícios genéricos e não recebem nomes de habilidades específicas de Killer/Yamato. Os grandes efeitos da Yamato não foram atribuídos ao boss sem confirmação. Não há referência de Madera nesta entrega.
+HP, danos, defesa, recuperação e restrições de movimento não estão calibrados à progressão original. Haki Saber tem recarga de 2 s e ganho de 5 de energia, conforme a [wiki de Shanks](https://wiki.gla.com.br/index.php/Shanks). Dano de 65, alcance de 1,45 SQM, preparação de 0,10 s e efeito de corte são aproximações. O ganho ocorre ao acertar nesta implementação; a condição exata não foi confirmada. O poder 15 da wiki não foi convertido diretamente em dano. Os golpes 1–3 continuam exercícios genéricos de treino, sem alegação de reproduzir o kit completo do Shanks. Os grandes efeitos da Yamato não foram atribuídos ao boss sem confirmação. Não há referência de Madera nesta entrega.
 
 ## Treinamento e métricas
 
-Boss Fight termina com vitória ou morte. Skill Practice repete o padrão selecionado e recupera HP do boss quando necessário; Endless também recupera HP do boss e continua a rotação. Slow Motion inicia a luta com velocidade 0,5×; o botão alterna 1×, 0,75×, 0,5× e 0,25×. A dificuldade altera dano/preparação conforme os presets e é uma ferramenta local de treino.
+Boss Fight termina com vitória ou morte. Skill Practice repete o padrão selecionado e recupera HP do boss quando necessário; Endless também recupera HP do boss e continua a rotação. Slow Motion inicia a luta com velocidade 0,5×; o botão alterna 1×, 0,75×, 0,5× e 0,25×. Selecionar Boss Fight, Skill Practice ou Endless restaura 1×, inclusive após reduzir manualmente a velocidade. A tentativa anterior é registrada com seu modo e velocidade anteriores. A dificuldade altera dano/preparação conforme os presets e é uma ferramenta local de treino.
 
 Esquiva bem-sucedida significa: **um padrão ameaçou a hitbox durante aviso ou execução, o jogador iniciou pelo menos um passo desde o início desse aviso, e nenhum golpe desse padrão o acertou até ele terminar**. Cada combo/rajada conta uma vez, mesmo com múltiplos acertos. Falha é um padrão que acertou. Precisão = esquivas / (esquivas + falhas). Padrões sem ameaça, posicionamento já seguro e acertos bloqueados por invulnerabilidade não aumentam a precisão. Se não houver amostras, aparece `—`.
 
@@ -99,7 +99,7 @@ São guardadas até 100 tentativas da sessão no CSV; a sessão seguinte começa
 
 `main.lua` conecta callbacks do LÖVE, carregamento de configuração e interface. `src/game.lua` coordena os ticks. `movement/input/arena/collision` cuidam dos SQMs, eventos, ocupação e geometria. `combat/skill/player/boss` implementam dano, estados, cooldowns, áreas, projéteis e IA. `training` calcula métricas. `animation/renderer/hud` desenham sem determinar resultados do combate. `data` descreve os ataques; parâmetros numéricos ficam centralizados em `config.lua`.
 
-O protótipo original foi preservado em `docs/original-main.lua`. O runtime usa placeholders próprios, sem arquivos internos do GLA. Para spritesheets autorizadas, siga [assets/README.md](assets/README.md). Sprite, resolução e zoom não mudam o tamanho lógico das hitboxes.
+O protótipo original foi preservado em `docs/original-main.lua`. Os PNGs selecionados da pasta fornecida estão incluídos em `assets`, sem depender da pasta Downloads durante a execução. Shanks usa três folhas 128 × 128, com quatro vistas de 64 × 64 cada; diagonais reutilizam vistas cardinais. Frames de ataque e morte não foram identificados: ataque usa efeito desenhado e morte usa a pose esmaecida. O boss permanece um placeholder. Chão, caixas e vegetação usam texturas fornecidas; a disposição da arena é própria do simulador. Veja [assets/README.md](assets/README.md) para o inventário e formato do carregador. Sprite, resolução e zoom não mudam o tamanho lógico das hitboxes.
 
 ## Verificação
 
@@ -112,7 +112,3 @@ Execute testes no runtime real do LÖVE:
 Os testes verificam FPS, oito direções, diagonais, toques curtos, input simultâneo, latência, cantos, entidades, hitbox interpolada, máscaras direcionais, cooldown/energia, defesa/imunidade, projéteis atravessando alvos pequenos, múltiplos pulsos, status, métricas, morte/vitória, treino sem fim, reinício, pathfinding e telas de interface. O processo retorna 0 no sucesso e 1 em falha, com relatório no console e no diretório de dados.
 
 O empacotamento é reproduzível com `python tools/package.py` usando Python apenas durante desenvolvimento. O jogo e o pacote portátil não dependem de Python ou de bibliotecas de vídeo.
-=======
-# boss-simulator
-A 2D boss fight training simulator inspired by Grand Line Adventures (GLA), built with Lua and LÖVE2D. Focused on improving movement, dodging, timing, and combat skills through challenging boss encounters and customizable training modes.
->>>>>>> e7980029c005a18acfa4f2c96ef0984d3aecfe42

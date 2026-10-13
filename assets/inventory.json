@@ -1,0 +1,53 @@
+{
+  "source": "User-supplied LanSPR folder",
+  "files": [
+    {
+      "file": "assets/player/Image_2D_2059_8444.png",
+      "original": "Image_2D_2059_8444.png",
+      "bytes": 6318,
+      "sha256": "31937f9b733f76d15c8e79acc08193d1b2f047c907954c4a8adeae96387bfd7c"
+    },
+    {
+      "file": "assets/player/Image_2D_2077_8463.png",
+      "original": "Image_2D_2077_8463.png",
+      "bytes": 6164,
+      "sha256": "e39dbeec961d97967517a71bd45936a84e680d5cbbf98f39d05d7c3b62a3ab4a"
+    },
+    {
+      "file": "assets/player/Image_2D_5264_6629.png",
+      "original": "Image_2D_5264_6629.png",
+      "bytes": 6303,
+      "sha256": "83f636540c24a5b0296bf7795b158a9e36d24e7d2204ea5af2f71c31909e76ff"
+    },
+    {
+      "file": "assets/tiles/Image_2D_1516_2895.png",
+      "original": "Image_2D_1516_2895.png",
+      "bytes": 1965,
+      "sha256": "f1b8605e69bee205f8beab534a68cf7fb6b8161cc8bf4752ed2ed94ba8e740f9"
+    },
+    {
+      "file": "assets/tiles/Image_2D_1550_1712.png",
+      "original": "Image_2D_1550_1712.png",
+      "bytes": 8978,
+      "sha256": "f5725d789a26807728b981ed37267574faccaae04f68df4640fb8c7c6d51bcda"
+    },
+    {
+      "file": "assets/tiles/Image_2D_1613_1473.png",
+      "original": "Image_2D_1613_1473.png",
+      "bytes": 3929,
+      "sha256": "7fd627693fe344b7aecc0cda8436565336b436a7cda813e64841693a95f47604"
+    },
+    {
+      "file": "assets/tiles/Image_2D_6120_0069.png",
+      "original": "Image_2D_6120_0069.png",
+      "bytes": 2540,
+      "sha256": "fc505724edcb799b1ea99c66da658f3fdf2327ba7887782f5611c6d2988bcd00"
+    },
+    {
+      "file": "assets/tiles/Image_2D_6124_0071.png",
+      "original": "Image_2D_6124_0071.png",
+      "bytes": 2580,
+      "sha256": "38267e5fdc85c339abbb18c84329bdb22245f11ce24ffd4ef5d4db20886c2d6a"
+    }
+  ]
+}

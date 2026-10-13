@@ -1,6 +1,6 @@
 return {
     player = {
-        { id="basic", name="Ataque básico", kind="melee", note="exercício de alcance" },
+        { id="basic", name="Haki Saber", kind="melee", note="Shanks: cooldown/energia da wiki; demais parâmetros estimados" },
         { id="cut", name="Corte frontal", kind="cells", note="aproximação de treino" },
         { id="spin", name="Corte circular", kind="circle", note="aproximação de treino" },
         { id="shot", name="Lâmina lançada", kind="projectile", note="demonstrativo" },

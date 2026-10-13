@@ -34,8 +34,9 @@ function Player:execute(world,cast)
         local dist=U.distance(self,world.boss)
         if dist<=cast.p.range+world.boss.radius then
             Combat.damage(world,self,world.boss,cast.p.damage,cast.p.status)
+            self.energy=math.min(self.maxEnergy,self.energy+(cast.p.energyGain or 0))
         end
-        world:addVisual({kind="circle",x=self.rx,y=self.ry,radius=cast.p.range},.14,"player")
+        world:addVisual({kind="slash",x=self.rx,y=self.ry,dx=cast.dx,dy=cast.dy,range=cast.p.range},.18,"player")
     else Skill.hazard(world,self,cast.shape,cast.p) end
 end
 function Player:update(dt,world)
@@ -44,9 +45,11 @@ function Player:update(dt,world)
     self.energy=math.min(self.maxEnergy,self.energy+world.config.player.energyRegen*dt)
     if self.status.stun then self.state="stunned";world.input:takeActions();return end
     local locked=self.cast and self.cast.p.lockMovement
+    local turnX,turnY,turning=world.input:consumeTurnDirection()
+    if turning and (turnX~=0 or turnY~=0) then self.faceX,self.faceY=turnX,turnY end
     if not locked then
         Movement.update(self,dt,world.config.movement)
-        if not self.step and self.gap<=0 then
+        if not turning and not self.step and self.gap<=0 then
             local dx,dy=world.input:consumeDirection(world.config.movement.bufferTap)
             Movement.start(self,dx,dy,world,world.config.movement)
         end

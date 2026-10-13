@@ -14,7 +14,7 @@ return {
         stepGap = 0, latencyMs = 0, blockDiagonalCorners = true,
         bufferTap = true, -- one recent direction, never an unbounded queue
     },
-    camera = { follow = true },
+    camera = { follow = true, zoom = 1.6 },
     controls = {
         up = {"w", "up", "kp8"}, down = {"s", "down", "kp2"},
         left = {"a", "left", "kp4"}, right = {"d", "right", "kp6"},
@@ -34,8 +34,9 @@ return {
         rotation = {"club", "fan", "club", "combo"},
     },
     playerSkills = {
-        basic = { cooldown = 0.55, windup = 0.10, duration = 0.10, damage = 65,
-            energy = 0, range = 1.45, lockMovement = false },
+        -- Haki Saber: wiki confirms 2 s cooldown / +5 energy. Other values estimated.
+        basic = { cooldown = 2.0, windup = 0.10, duration = 0.10, damage = 65,
+            energy = 0, energyGain = 5, range = 1.45, lockMovement = false },
         cut = { cooldown = 3.0, windup = 0.22, duration = 0.15, damage = 170,
             energy = 18, range = 3, width = 1, lockMovement = false },
         spin = { cooldown = 6.0, windup = 0.38, duration = 0.18, damage = 235,
@@ -68,6 +69,9 @@ return {
     },
     provenance = {
         referenceMoveSpeed = "informado: Killer 300",
+        playerSprite = "fornecida: Shanks; direções inferidas; diagonais reutilizam vistas cardinais",
+        cameraZoom = "preferência visual: 1.6x; não medido no GLA",
+        basic = "Haki Saber: wiki confirma recarga 2s e ganho 5; dano/alcance/timing estimados",
         straightStep = "estimado: ~99px / ~296px/s no vídeo de caminhada",
         diagonalStep = "estimado: razão diagonal/reto ~2 no vídeo",
         hitboxes = "não calibradas: aproximações em SQMs",

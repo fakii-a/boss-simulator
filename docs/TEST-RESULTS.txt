@@ -1,4 +1,10 @@
 PASS short tap survives a down/up within one simulation tick
+PASS Ctrl turns all eight directions without starting a step
+PASS quick Ctrl tap is preserved and release allows held movement
+PASS Ctrl during movement finishes the current SQM without another step
+PASS Ctrl obeys latency and opposite directions cancel
+PASS leaving Slow Motion restores real speed and records the old mode
+PASS Haki Saber grants capped energy on hit and observes its cooldown
 PASS held movement remains identical at 30, 60, 144 FPS
 PASS diagonal uses twice straight duration and eight directions work
 PASS opposite keys cancel and a new axis produces a diagonal
@@ -24,10 +30,13 @@ PASS practice and endless replenish boss; fight reports victory
 PASS slow motion scales the entire simulation and pause freezes it
 PASS restart clears inputs and effects while preserving session deaths
 PASS pathfinding routes around obstacles to a reachable adjacent SQM
+PASS supplied Shanks frames and all map textures load in the real graphics runtime
+PASS adjustable zoom, walking views, attack effect and death fallback render
 PASS main HUD renders and buttons hit their intended controls
 PASS calibration, controls and help pages render
 PASS calibration buttons change timing and latency
 PASS remapped gameplay keys have one action without ambiguity
+PASS HUD mode switches restore speed and Ctrl stays reserved for facing
 PASS performance summary renders with working restart control
 PASS pause and scaled viewport render without graphics errors
-32 tests passed
+41 tests passed

@@ -19,7 +19,7 @@ Fontes prioritárias: os três MKVs fornecidos pelo usuário. Todos: 1920 × 108
 | SQM aparente na gravação | ~98–100 px | Estimado por deslocamentos / cenário |
 | Passo reto | 0,333333 s | Estimativa: ~99 px / ~296 px/s |
 | Passo diagonal | 0,666667 s | Estimativa apoiada na razão ~2 observada |
-| SQM renderizado | 40 px | Escolha visual do simulador, independente do tempo |
+| SQM renderizado | base 40 px; v0.2 com zoom 1,6× = 64 px | Escolha visual do simulador, independente do tempo |
 | Primeiro comando | próximo tick de 1/120 s | Escolha local; latência real desconhecida |
 | Latência adicional | 0 ms | Configurável; gravação não mede rede/input |
 | Hitbox do personagem | raio 0,22 SQM no chão | Estimada; não usar dimensões do sprite como hitbox |
@@ -38,4 +38,12 @@ A [página do Killer](https://wiki.gla.com.br/Killer) lista habilidades; os [dad
 
 ## Como refinar
 
-Compare trechos retos e diagonais separadamente. Divida duração entre centros de SQMs por número de passos; desconsidere começo/fim sem registro de tecla. Ajuste `config.lua`, pressione F5 e confira tempo e posição no F3. Use treino individual e telegráficos opcionais para isolar um ataque. Não há spritesheets autorizadas fornecidas: os placeholders são desenhos originais produzidos pelo código. Nenhum recorte do GLA é usado como recurso gráfico do jogo.
+Compare trechos retos e diagonais separadamente. Divida duração entre centros de SQMs por número de passos; desconsidere começo/fim sem registro de tecla. Ajuste `config.lua`, pressione F5 e confira tempo e posição no F3. Use treino individual e telegráficos opcionais para isolar um ataque.
+
+## Atualização v0.2: Shanks e cenário
+
+O usuário forneceu `Image_2D_5264_6629.png` e indicou a pasta com as demais texturas. A pasta contém 13.815 PNGs. A imagem indicada e as folhas `Image_2D_2059_8444.png` e `Image_2D_2077_8463.png` mostram poses compatíveis de Shanks: 128 × 128, quatro regiões de 64 × 64 por folha. A orientação vertical e os recortes foram examinados visualmente. O mapeamento cardinal é inferido, e diagonais reutilizam vistas; ataques/morte não possuem sequências confirmadas. Texturas selecionadas de piso, árvore, arbusto e caixa estão no inventário `assets/inventory.json` e são incluídas no jogo. A arena não é uma cópia de um mapa original.
+
+A [wiki de Shanks](https://wiki.gla.com.br/index.php/Shanks), consultada em 13/10/2026, informa para Haki Saber recarga 2, ganho de energia 5 e poder 15. O simulador usa 2 s e +5 de energia ao acertar. A condição do ganho, alcance, dano final, animação e preparação não foram confirmados; são estimativas configuráveis. O poder da wiki não é uma fórmula de dano. Golpes 1–3 permanecem demonstrativos; não foi reconstruído o restante do kit de Shanks.
+
+Ctrl + direção e zoom 1,6× atendem aos ajustes pedidos pelo usuário. A duração dos passos continua baseada no vídeo do Killer com velocidade 300, sem afirmar que Shanks possui a mesma velocidade no GLA. O tamanho da sprite não participa das colisões.

@@ -5,14 +5,17 @@ local function sign(v) return v>0 and 1 or (v<0 and -1 or 0) end
 function Input.new(controls,latency)
     return setmetatable({controls=controls,latency=latency,events={},held={},actions={},tap=nil},Input)
 end
-function Input:reset() self.events={};self.held={};self.actions={};self.tap=nil end
+function Input:reset() self.events={};self.held={};self.actions={};self.tap=nil;self.turnTap=nil end
+function Input:isTurnKey(key) return key=="lctrl" or key=="rctrl" end
+function Input:acceptsKey(key) return self:isTurnKey(key) or self:actionFor(key)~=nil end
+function Input:isTurning() return self.held.lctrl or self.held.rctrl or false end
 function Input:actionFor(key)
     for action,keys in pairs(self.controls) do
         for _,k in ipairs(keys) do if k==key then return action end end
     end
 end
 function Input:enqueue(key,down,time)
-    if self:actionFor(key) then
+    if self:acceptsKey(key) then
         self.events[#self.events+1]={key=key,down=down,due=time+self.latency/1000}
     end
 end
@@ -34,12 +37,28 @@ function Input:update(time)
         self.held[event.key]=event.down
         if event.down and not was then
             local action=self:actionFor(event.key)
-            if directions[action] then
+            if self:isTurnKey(event.key) then
+                self.tap=nil
+            elseif directions[action] then
                 local x,y=self:direction()
-                self.tap=(x~=0 or y~=0) and {x,y} or nil
+                if self:isTurning() then
+                    self.turnTap=(x~=0 or y~=0) and {x,y} or nil
+                    self.tap=nil
+                else self.tap=(x~=0 or y~=0) and {x,y} or nil end
             else self.actions[#self.actions+1]=action end
         end
     end
+end
+function Input:consumeTurnDirection()
+    local turning=self:isTurning() or self.turnTap~=nil
+    local x,y=0,0
+    if turning then
+        x,y=self:direction()
+        if x==0 and y==0 and self.turnTap then x,y=self.turnTap[1],self.turnTap[2] end
+        self.tap=nil
+    end
+    self.turnTap=nil
+    return x,y,turning
 end
 function Input:consumeDirection(bufferTap)
     local x,y=self:direction()

@@ -25,6 +25,67 @@ function T.run()
         w.input:enqueue("d",true,0);w.input:enqueue("d",false,.001)
         ticks(w,.5);assert(w.player.x==x+1 and not w.player.step)
     end)
+    test("Ctrl turns all eight directions without starting a step",function()
+        for _,modifier in ipairs({"lctrl","rctrl"}) do
+            for _,d in ipairs({{"w",0,-1},{"d",1,0},{"s",0,1},{"a",-1,0},
+                {"kp7",-1,-1},{"kp9",1,-1},{"kp1",-1,1},{"kp3",1,1}}) do
+                local w=fresh();local x,y=w.player.x,w.player.y
+                w.input:enqueue(modifier,true,0);w.input:enqueue(d[1],true,0)
+                ticks(w,1)
+                assert(w.player.faceX==d[2] and w.player.faceY==d[3])
+                assert(w.player.x==x and w.player.y==y and w.player.steps==0 and not w.player.step)
+            end
+        end
+    end)
+    test("quick Ctrl tap is preserved and release allows held movement",function()
+        local w=fresh()
+        for _,event in ipairs({{"lctrl",true},{"a",true},{"a",false},{"lctrl",false}}) do
+            w.input:enqueue(event[1],event[2],0)
+        end
+        ticks(w,.5);assert(w.player.faceX==-1 and w.player.steps==0)
+        w.input:enqueue("lctrl",true,w.time);w.input:enqueue("w",true,w.time)
+        w.input:enqueue("d",true,w.time);ticks(w,.1)
+        assert(w.player.faceX==1 and w.player.faceY==-1 and w.player.steps==0)
+        w.input:enqueue("lctrl",false,w.time);ticks(w,.01)
+        assert(w.player.steps==1 and w.player.step)
+    end)
+    test("Ctrl during movement finishes the current SQM without another step",function()
+        local w=fresh();w.input:enqueue("d",true,0);ticks(w,.1)
+        w.input:enqueue("lctrl",true,w.time);w.input:enqueue("d",false,w.time)
+        w.input:enqueue("w",true,w.time);ticks(w,1)
+        assert(w.player.steps==1 and w.player.x==12 and w.player.y==12 and not w.player.step)
+        assert(w.player.faceX==0 and w.player.faceY==-1)
+    end)
+    test("Ctrl obeys latency and opposite directions cancel",function()
+        local w=fresh();w.input.latency=100
+        w.input:enqueue("rctrl",true,0);w.input:enqueue("d",true,0)
+        ticks(w,.09);assert(w.player.faceX==0)
+        ticks(w,.02);assert(w.player.faceX==1 and w.player.steps==0)
+        w.input:enqueue("a",true,w.time);ticks(w,.2)
+        assert(w.player.faceX==1 and w.player.steps==0)
+    end)
+    test("leaving Slow Motion restores real speed and records the old mode",function()
+        for _,mode in ipairs({"fight","practice","endless"}) do
+            local w=fresh();w:setMode("slow");w.settings.speed=.25
+            for _=1,60 do w:update(1/60) end
+            close(w.time,.25);w:setMode(mode)
+            assert(w.settings.speed==1 and w.settings.mode==mode)
+            local previous=w.training.history[#w.training.history]
+            assert(previous.mode=="slow" and previous.speed==.25)
+            for _=1,60 do w:update(1/60) end
+            close(w.time,1);close(w.training.stats.realTime,1)
+        end
+    end)
+    test("Haki Saber grants capped energy on hit and observes its cooldown",function()
+        local w=fresh();w.config.player.energyRegen=0;w.player.energy=98
+        place(w.boss,w.player.x+1,w.player.y)
+        assert(w.player:use(w,"basic"));ticks(w,.2)
+        close(w.player.energy,100);assert(w.training.stats.dealt>0)
+        assert(not w.player:use(w,"basic"));ticks(w,1.81)
+        assert(w.player:use(w,"basic"));ticks(w,.2)
+        w.player.energy=20;place(w.boss,20,10);ticks(w,2)
+        assert(w.player:use(w,"basic"));ticks(w,.2);close(w.player.energy,20)
+    end)
     test("held movement remains identical at 30, 60, 144 FPS",function()
         local states={}
         for _,fps in ipairs({30,60,144}) do
