@@ -4,7 +4,7 @@ local U=require("src.util")
 local R={};R.__index=R
 function R.new()
     return setmetatable({player=Animation.new("player"),boss=Animation.new("boss"),tiles=Tiles.new(),
-        view={x=24,y=112,w=900,h=592}},R)
+        view={x=0,y=0,w=1280,h=820}},R)
 end
 function R:camera(world)
     local v,s=self.view,world.config.arena.sqm*world.config.window.scale*(world.config.camera.zoom or 1)
@@ -66,10 +66,12 @@ function R:draw(world,fonts)
             end
         end
     end end
-    -- Arena center mark helps recordings reveal camera translation.
+    -- Calibration marks only appear when explicitly debugging.
+    if world.debug then
     local mx,my=self:point(math.floor(world.arena.cols/2),math.floor(world.arena.rows/2))
     g.setColor(.5,.68,.64,.13);g.circle("line",mx,my,s*2.8)
     g.line(mx-s*.45,my,mx+s*.45,my);g.line(mx,my-s*.45,mx,my+s*.45)
+    end
     local cast=world.boss.cast
     if cast and (cast.phase=="windup" or cast.phase=="between") and (world.settings.telegraphs or world.debug) then
         if cast.shape then
@@ -97,12 +99,14 @@ function R:draw(world,fonts)
         else
         self[e.kind]:draw(e,x,y,s,world.time)
         if e.hp>0 then
+            if world.debug then
             local width=e.kind=="boss" and 66 or 44
             g.setColor(.03,.05,.07,.85);g.rectangle("fill",x-width/2,y-s*1.6,width,5,2)
             g.setColor(e.kind=="boss" and .94 or .27,e.kind=="boss" and .38 or .83,e.kind=="boss" and .4 or .65)
             g.rectangle("fill",x-width/2,y-s*1.6,width*e.hp/e.maxHp,5,2)
             g.setFont(fonts.tiny);g.setColor(.85,.91,.88)
             g.printf(e.kind=="boss" and "ALVIDA · ESTIMADO" or "SHANKS",x-95,y-s*1.6-16,190,"center")
+            end
             if e.status.slow then g.setColor(.55,.77,1);g.print("LENTO",x-20,y+6) end
             if world.debug then
                 g.setColor(1,.2,.85);g.circle("line",x,y,e.radius*s)
@@ -129,6 +133,5 @@ function R:draw(world,fonts)
         g.printf(t.text,x-55,y-s*1.8-(.85-t.remaining)*26,110,"center")
     end
     g.setScissor()
-    g.setColor(.44,.61,.59,.3);g.rectangle("line",v.x,v.y,v.w,v.h,6)
 end
 return R

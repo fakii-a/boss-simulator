@@ -32,11 +32,13 @@ PASS restart clears inputs and effects while preserving session deaths
 PASS pathfinding routes around obstacles to a reachable adjacent SQM
 PASS supplied Shanks frames and all map textures load in the real graphics runtime
 PASS adjustable zoom, walking views, attack effect and death fallback render
-PASS main HUD renders and buttons hit their intended controls
-PASS calibration, controls and help pages render
+PASS full-window arena and compact live HUD expose only menu and skills
+PASS training, calibration, controls and help pages render inside the menu
+PASS Escape toggles the menu, freezes simulation, clears held input and exposes training controls
 PASS calibration buttons change timing and latency
 PASS remapped gameplay keys have one action without ambiguity
 PASS HUD mode switches restore speed and Ctrl stays reserved for facing
 PASS performance summary renders with working restart control
 PASS pause and scaled viewport render without graphics errors
-41 tests passed
+PASS wide and tall viewports keep the arena full-window and menu clicks aligned
+43 tests passed

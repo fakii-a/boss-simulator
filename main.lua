@@ -2,8 +2,8 @@ local Game=require("src.game")
 local Hud=require("src.hud")
 local Renderer=require("src.renderer")
 local U=require("src.util")
-local world,hud,renderer,screenScale,offsetX,offsetY
-local testMode,captureMode,captureFrames=false,false,0
+local world,hud,renderer,screenScale
+local testMode,captureMode,captureFrames,captureMenu=false,false,0,false
 local function loadConfig(saved)
     package.loaded.config=nil
     local c=require("config")
@@ -39,6 +39,7 @@ function love.load(args)
     for _,arg in ipairs(args or {}) do
         if arg=="--test" then testMode=true end
         if arg=="--capture" then captureMode=true end
+        if arg=="--capture-menu" then captureMode=true;captureMenu=true end
     end
     if testMode then
         local ok,report=pcall(function() return require("tests.run").run() end)
@@ -58,22 +59,23 @@ function love.load(args)
         require("src.movement").initialize(world.player,6,9)
         require("src.movement").initialize(world.boss,10,8)
         world.boss:begin(world,"fan")
+        world.menu=captureMenu
     end
     love.resize(love.graphics.getDimensions())
 end
 function love.resize(w,h)
     screenScale=math.min(w/1280,h/820)
-    offsetX,offsetY=(w-1280*screenScale)/2,(h-820*screenScale)/2
+    if renderer then renderer.view={x=0,y=0,w=w/screenScale,h=h/screenScale} end
 end
 function love.update(dt)
     if testMode then return end
     world:update(dt)
     if captureMode then
         captureFrames=captureFrames+1
-        if captureFrames==4 then
+        if captureFrames==90 then
             love.graphics.captureScreenshot(function(data)
                 local png=data:encode("png")
-                local file=assert(io.open(love.filesystem.getSource().."/docs/preview.png","wb"))
+                local file=assert(io.open(love.filesystem.getSource().."/docs/"..(captureMenu and "menu-preview.png" or "preview.png"),"wb"))
                 file:write(png:getString());file:close();love.event.quit()
             end)
         end
@@ -82,13 +84,10 @@ end
 function love.keypressed(key,scancode,isrepeat)
     if testMode or isrepeat then return end
     if hud:rebind(key,world) then return end
-    local ui=({f1="mode:fight",f2="mode:practice",f4="mode:endless",f7="mode:slow",f6="restart",tab="menu"})[key]
+    local ui=hud:systemAction(key)
     if ui then hud:execute(ui,world,reload);return end
     if key=="f3" then world.debug=not world.debug;return end
     if key=="f5" then reload();return end
-    if key=="escape" then
-        hud:execute(world.menu and "menu" or "pause",world,reload);return
-    end
     if world.input:acceptsKey(key) then
         if not world.menu and not world.paused and not world.training.result then world.input:enqueue(key,true,world.time) end
         return
@@ -102,7 +101,7 @@ function love.keyreleased(key)
 end
 function love.mousepressed(x,y,button)
     if testMode or button~=1 then return end
-    local action=hud:click((x-offsetX)/screenScale,(y-offsetY)/screenScale)
+    local action=hud:click(x/screenScale,y/screenScale)
     if action then hud:execute(action,world,reload) end
 end
 function love.focus(focused)
@@ -114,7 +113,7 @@ end
 function love.draw()
     if testMode then return end
     love.graphics.clear(.035,.05,.07)
-    love.graphics.push();love.graphics.translate(offsetX,offsetY);love.graphics.scale(screenScale)
+    love.graphics.push();love.graphics.scale(screenScale)
     renderer:draw(world,hud.fonts);hud:draw(world,renderer)
     love.graphics.pop()
 end

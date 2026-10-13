@@ -1,12 +1,16 @@
 # GLA Boss Fight Simulator
 
 <<<<<<< HEAD
-Versão 0.2 jogável, offline, em Lua + LÖVE 11.5, com Shanks e cenário usando PNGs fornecidos pelo usuário. Câmera com zoom 1,6×, Ctrl + direção para girar e retorno a 1× ao sair de Slow Motion. A movimentação mantém a calibração aproximada dos vídeos do Killer com move speed 300; essa velocidade não foi confirmada para Shanks.
+Versão 0.3 jogável, offline, em Lua + LÖVE 11.5, com Shanks e cenário usando PNGs fornecidos pelo usuário. Arena ocupa toda a janela, com HUD compacto, contador de FPS e menu no Esc. Câmera com zoom 1,6×, Ctrl + direção para girar e retorno a 1× ao sair de Slow Motion. A movimentação mantém a calibração aproximada dos vídeos do Killer com move speed 300; essa velocidade não foi confirmada para Shanks.
 =======
 Versão 0.1 jogável, offline, em Lua + LÖVE 11.5.
 >>>>>>> 9f5342e9e239ed9b0c20c88b2684cfe93fd52dcc
 
 ![Interface do simulador](docs/preview.png)
+
+Durante a luta aparecem HP, energia, vida do boss, quatro atalhos de habilidades com cooldown e FPS. Modos, frequência, dificuldade, estatísticas, reinício e encerramento ficam na aba **Treinamento** do menu. **Esc abre e fecha o menu**, pausando a simulação enquanto estiver aberto. Tab não abre mais o menu. Calibração, remapeamento e ajuda continuam acessíveis pelas outras abas. O contador usa FPS reais de renderização, inclusive durante pausa e slow motion.
+
+![Menu de treinamento](docs/menu-preview.png)
 
 ## Executar no Windows
 
@@ -33,8 +37,8 @@ Ou abra `dist\GLA-Boss-Fight-Simulator.love` com o LÖVE. O arquivo `.love` é u
 | Corte circular | 2 |
 | Lâmina lançada | 3 |
 | Reiniciar instantaneamente | R ou F6 |
-| Pausar / continuar | P ou Esc |
-| Ajustes / controles / calibração | Tab |
+| Pausar / continuar | P |
+| Abrir / fechar menu e pausar enquanto aberto | Esc |
 | Boss Fight | F1 |
 | Skill Practice | F2 |
 | Endless | F4 |
@@ -44,7 +48,7 @@ Ou abra `dist\GLA-Boss-Fight-Simulator.love` com o LÖVE. O arquivo `.love` é u
 | Próximo padrão individual | [ ou ] |
 | Alternar velocidade / frequência | PageUp/PageDown; −/= |
 
-Todos os controles de combate e direção são configuráveis em `config.lua` ou na página **Controles** do menu Tab. Clique numa ação e pressione uma tecla. Ctrl é reservado para girar; Tab, Esc e F1–F7 são reservadas à interface. R e P podem ser usados por habilidades remapeadas; nesse caso, F6 e Esc continuam disponíveis para reinício/pausa. Teclas de ação usam os nomes do LÖVE (`space`, `kp7`, `up`, etc.); não dependem do repeat do Windows.
+Todos os controles de combate e direção são configuráveis em `config.lua` ou na página **Controles** do menu Esc. Clique numa ação e pressione uma tecla. Ctrl é reservado para girar; Esc e F1–F7 são reservadas à interface. Esc cancela a escolha de tecla quando um remapeamento está em andamento. Tab pode ser remapeado como tecla de gameplay. R e P podem ser usados por habilidades remapeadas; nesse caso, F6 reinicia e Esc permite pausar pelo menu. Teclas de ação usam os nomes do LÖVE (`space`, `kp7`, `up`, etc.); não dependem do repeat do Windows.
 
 O ataque básico procura o único boss e gira para ele; seu alcance é radial. As habilidades frontais seguem a direção definida por movimento ou Ctrl + direção e guardam direção/área no início da preparação. Ctrl durante um passo deixa o passo atual terminar e impede o próximo; não teleporta nem interrompe a interpolação. Soltar Ctrl com uma direção ainda pressionada volta a andar. Não há mira pelo mouse nesta versão. Botões da barra também executam as habilidades.
 
@@ -60,11 +64,11 @@ O ataque básico procura o único boss e gira para ele; seu alcance é radial. A
 
 Veja [docs/REFERENCIAS.md](docs/REFERENCIAS.md) para evidências, timestamps e limites da medição. **300 é o atributo informado para Killer**, não uma fórmula que converte automaticamente em pixels/s. O SQM base de 40 px com zoom 1,6× aparece como 64 px no layout 1280 × 820; essa escolha visual não altera o tempo dos passos.
 
-No Tab → **Calibração**, ajuste passos, intervalo extra, latência, tamanho visual do SQM, preparação do leque e câmera. Em `config.lua`, também ajuste HP, energia, defesa, máscaras de alcance, hitboxes, dano, duração, cooldown, recuperação, velocidade de projéteis e rotação. A tabela `provenance` distingue dados informados, estimados e não calibrados.
+No Esc → **Calibração**, ajuste passos, intervalo extra, latência, tamanho visual do SQM, preparação do leque e câmera. Em `config.lua`, também ajuste HP, energia, defesa, máscaras de alcance, hitboxes, dano, duração, cooldown, recuperação, velocidade de projéteis e rotação. A tabela `provenance` distingue dados informados, estimados e não calibrados.
 
 F5 lê `config.lua` novamente e reinicia a tentativa. O botão **Salvar ajustes** guarda overrides em `settings.lua` no diretório de dados do LÖVE; eles são aplicados no próximo início. F5 ignora overrides salvos na sessão corrente. Para persistir a restauração, pressione **Salvar ajustes** após restaurar.
 
-Janelas redimensionadas preservam o layout com escala e margens. Ajuste o zoom em Tab → Calibração ou em `camera.zoom` (padrão 1,6); `window.scale` é um multiplicador adicional. `config.lua.window.width/height` controlam a resolução inicial; o layout tem referência 1280 × 820 e dimensões mínimas 960 × 615. Câmera acompanha jogador com limites da arena, ou pode ficar fixa. Preferências antigas de câmera preservam o novo zoom padrão.
+Janelas redimensionadas mantêm a arena ocupando toda a área, sem faixas pretas de interface. O HUD se ancora nas bordas e o menu fica centralizado. Ajuste o zoom em Esc → Calibração ou em `camera.zoom` (padrão 1,6); `window.scale` é um multiplicador adicional. `config.lua.window.width/height` controlam a resolução inicial; a interface tem referência 1280 × 820 e dimensões mínimas 960 × 615. Câmera acompanha jogador com limites da arena, ou pode ficar fixa. Preferências antigas de câmera preservam o novo zoom padrão.
 
 ## Boss e padrões
 
@@ -87,7 +91,7 @@ Esquiva bem-sucedida significa: **um padrão ameaçou a hitbox durante aviso ou 
 
 Ataque básico e habilidades ofensivas do jogador possuem cooldowns e custos próprios. Defesa subtrai dano por acerto, com mínimo zero. Cada área ativa acerta uma vez por alvo/pulso; projéteis usam teste do segmento percorrido, evitando atravessar alvos ou paredes em altas velocidades. Lentidão e stun são estados reutilizáveis. Invulnerabilidade só existe quando configurada; o padrão é zero, inclusive após receber dano.
 
-HUD mostra dano recebido, dano causado, DPS, precisão, sobrevivência e mortes da sessão. Tempos de combate e DPS usam segundos da simulação; o relatório também registra tempo real ativo. Pausa/menu não contam. Frames muito longos são limitados a 0,25 s para evitar uma recuperação brusca após travar/minimizar; nesses casos o relógio não tenta alcançar o tempo de parede perdido.
+Esc → Treinamento mostra dano recebido, dano causado, DPS, precisão, sobrevivência e mortes da sessão. Essas estatísticas não ocupam espaço durante a luta. Tempos de combate e DPS usam segundos da simulação; o relatório também registra tempo real ativo. Pausa/menu não contam. Frames muito longos são limitados a 0,25 s para evitar uma recuperação brusca após travar/minimizar; nesses casos o relógio não tenta alcançar o tempo de parede perdido.
 
 Fim, reinício ou encerramento geram resumo e CSV. `attempts.csv`, `settings.lua` e `test-results.txt` ficam em:
 
