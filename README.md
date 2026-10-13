@@ -1,6 +1,10 @@
 # GLA Boss Fight Simulator
 
+<<<<<<< HEAD
 Versão 0.2 jogável, offline, em Lua + LÖVE 11.5, com Shanks e cenário usando PNGs fornecidos pelo usuário. Câmera com zoom 1,6×, Ctrl + direção para girar e retorno a 1× ao sair de Slow Motion. A movimentação mantém a calibração aproximada dos vídeos do Killer com move speed 300; essa velocidade não foi confirmada para Shanks.
+=======
+Versão 0.1 jogável, offline, em Lua + LÖVE 11.5.
+>>>>>>> 9f5342e9e239ed9b0c20c88b2684cfe93fd52dcc
 
 ![Interface do simulador](docs/preview.png)
 
