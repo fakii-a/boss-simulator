@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # GLA Boss Fight Simulator
 
 Versão 0.1 jogável, offline, em Lua + LÖVE 11.5, para treinar passos por SQMs, posicionamento, alcance e timing. A movimentação foi aproximada pelos três vídeos fornecidos: Killer com move speed 300 e luta Alvida × Yamato. **Não é uma reprodução já calibrada de todos os sistemas do GLA.**
@@ -111,3 +112,7 @@ Execute testes no runtime real do LÖVE:
 Os testes verificam FPS, oito direções, diagonais, toques curtos, input simultâneo, latência, cantos, entidades, hitbox interpolada, máscaras direcionais, cooldown/energia, defesa/imunidade, projéteis atravessando alvos pequenos, múltiplos pulsos, status, métricas, morte/vitória, treino sem fim, reinício, pathfinding e telas de interface. O processo retorna 0 no sucesso e 1 em falha, com relatório no console e no diretório de dados.
 
 O empacotamento é reproduzível com `python tools/package.py` usando Python apenas durante desenvolvimento. O jogo e o pacote portátil não dependem de Python ou de bibliotecas de vídeo.
+=======
+# boss-simulator
+A 2D boss fight training simulator inspired by Grand Line Adventures (GLA), built with Lua and LÖVE2D. Focused on improving movement, dodging, timing, and combat skills through challenging boss encounters and customizable training modes.
+>>>>>>> e7980029c005a18acfa4f2c96ef0984d3aecfe42
