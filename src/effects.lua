@@ -31,7 +31,9 @@ function Effects:draw(renderer,visual)
     local s,boss=renderer.sqm,visual.kind=="boss"
     local x,y=renderer:point(shape.x,shape.y)
     local angle=math.atan2(shape.dy or 0,shape.dx or 1)
-    if shape.style=="spin" then
+    if shape.style=="dash" then
+        self:sprite("slash",progress,x,y-s*.35,s*.8,s*.45,angle,false)
+    elseif shape.style=="spin" then
         local diameter=(shape.radius or 1.65)*s*2
         self:sprite("ring",progress,x,y,diameter,diameter,progress*math.pi,boss)
     elseif shape.style=="hit" then

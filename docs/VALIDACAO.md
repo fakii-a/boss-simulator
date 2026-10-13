@@ -1,8 +1,12 @@
-# Verificação da entrega v0.4 — 13/10/2026
+# Verificação da entrega v0.5 — 13/10/2026
 
 - Runtime real: LÖVE 11.5 instalado em `C:\Program Files\LOVE` e LuaJIT de sua `lua51.dll`.
 - Compilação dos módulos Lua verificada antes da execução dos testes.
-- **48 testes passaram**, incluindo 35 testes de simulação e 13 de interface/recursos gráficos.
+- **54 testes passaram**, incluindo 40 testes de simulação e 14 de interface/recursos gráficos.
+- Dash: oito direções, custo/cooldown, preparação/recuperação, retomada de passo parcial sem teleporte, vulnerabilidade, paredes/entidades/cantos, pausa/slow motion/reset e equivalência de FPS verificados.
+- Preferências antigas recebem o novo controle sem sobrescrever teclas remapeadas; a barra possui cinco habilidades e o menu comporta Dash.
+- Pontuação removida: ataques evitados não geram bônus nem campos de precisão/esquivas nos resultados. Dano e acertos continuam registrados.
+- Círculos de orientação removidos das sprites e placeholders; capturas atualizadas inspecionadas.
 - Self-stun das quatro habilidades verificado durante passos: posição e fase congeladas, bloqueio de novas skills, retomada, vulnerabilidade, reset, pausa, slow motion e equivalência a 30/60/144 FPS.
 - Pixels renderizados conferidos: ambas as barras de HP verdes, energia azul e aviso de ataque vermelho puro.
 - Sprite do boss e sequências de corte, giro, impacto e projétil carregadas e desenhadas no runtime real. Captura `skill-preview.png` inspecionada.
@@ -19,7 +23,7 @@
 - A janela do jogo foi aberta pelo runtime e a captura `preview.png` foi inspecionada.
 - Telas de calibração, controles, ajuda, pausa, resumo e viewport escalado exercitadas no LÖVE real.
 - O arquivo `.love` empacotado passou nos mesmos testes.
-- ZIP portátil extraído, EXE com as DLLs incluídas executado: relatório com **48 testes passaram**. A gravação do relatório foi confirmada no diretório próprio do EXE.
+- ZIP portátil extraído, EXE com as DLLs incluídas executado: relatório com **54 testes passaram**. A gravação do relatório foi confirmada no diretório próprio do EXE.
 - ZIPs e `.love` verificados com teste de integridade; hashes e tamanhos em `dist/manifest.json`.
 - Vídeos foram analisados visualmente por quadros e o deslocamento do cenário medido por fluxo óptico. Isso fornece estimativas de movimentação, não comprova hitboxes internas, cooldowns nem rotação oficial.
 

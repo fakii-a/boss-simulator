@@ -1,4 +1,5 @@
 local Movement=require("src.movement")
+local Dash=require("src.dash")
 local Skill=require("src.skill")
 local Combat=require("src.combat")
 local U=require("src.util")
@@ -13,7 +14,7 @@ function Player.new(config)
 end
 function Player:use(world,id)
     local p=world.config.playerSkills[id]
-    if self.hp<=0 or self.cast or self.selfStunRemaining>1e-9 or self.status.stun or (self.cooldowns[id] or 0)>0 or self.energy<p.energy then return false end
+    if self.hp<=0 or self.cast or self.dash or self.selfStunRemaining>1e-9 or self.status.stun or (self.cooldowns[id] or 0)>0 or self.energy<p.energy then return false end
     if id=="basic" then
         self.faceX,self.faceY=U.sign(world.boss.x-self.x),U.sign(world.boss.y-self.y)
         if self.faceX==0 and self.faceY==0 then self.faceY=1 end
@@ -30,6 +31,7 @@ function Player:use(world,id)
     return true
 end
 function Player:execute(world,cast)
+    if cast.id=="dash" then Dash.start(self,cast.dx,cast.dy,cast.p);return end
     world:addVisual({kind="effect",style=cast.id,x=cast.originX,y=cast.originY,
         dx=cast.dx,dy=cast.dy,range=cast.p.range,radius=cast.p.radius,area=cast.shape},
         cast.id=="spin" and .45 or .32,"player")
@@ -46,7 +48,7 @@ end
 function Player:update(dt,world)
     Combat.tickEntity(self,dt)
     self.selfStunRemaining=math.max(0,self.selfStunRemaining-dt)
-    if self.hp<=0 then self.state="dead";return end
+    if self.hp<=0 then self.dash=nil;self.state="dead";return end
     self.energy=math.min(self.maxEnergy,self.energy+world.config.player.energyRegen*dt)
     if self.status.stun then self.state="stunned";world.input:takeActions();return end
     if self.cast then
@@ -56,21 +58,23 @@ function Player:update(dt,world)
     self.attackPose=math.max(0,(self.attackPose or 0)-dt)
     -- Skills are accepted before movement: a cast freezes even a partial SQM immediately.
     for _,action in ipairs(world.input:takeActions()) do
-        local id=action=="basic" and "basic" or ({skill1="cut",skill2="spin",skill3="shot"})[action]
+        local id=action=="basic" and "basic" or ({skill1="cut",skill2="spin",skill3="shot",skill4="dash"})[action]
         if id then self:use(world,id) end
     end
     if world.input:isDown("basic") then self:use(world,"basic") end
-    local locked=self.selfStunRemaining>1e-9 or (self.cast and self.cast.p.lockMovement)
+    local locked=self.dash or self.selfStunRemaining>1e-9 or (self.cast and self.cast.p.lockMovement)
     local turnX,turnY,turning=world.input:consumeTurnDirection()
     if not locked and turning and (turnX~=0 or turnY~=0) then self.faceX,self.faceY=turnX,turnY end
-    if not locked then
+    if self.dash then
+        Dash.update(self,dt,world);world.input:consumeDirection(false)
+    elseif not locked then
         Movement.update(self,dt,world.config.movement)
         if not turning and not self.step and self.gap<=0 then
             local dx,dy=world.input:consumeDirection(world.config.movement.bufferTap)
             Movement.start(self,dx,dy,world,world.config.movement)
         end
     else world.input:consumeDirection(false) end -- discard taps while locked; held keys resume naturally
-    self.state=self.cast and "attacking" or (locked and "recovering") or
+    self.state=self.dash and "moving" or self.cast and "attacking" or (locked and "recovering") or
         (self.attackPose>0 and "attacking") or (self.step and "moving" or "idle")
     world.training.stats.steps=self.steps
 end

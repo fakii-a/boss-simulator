@@ -22,30 +22,12 @@ function Skill.hazard(world,owner,shape,p,attack)
     if attack then attack.hazards=attack.hazards+1 end
 end
 function Skill.newAttack(world,id,shape,parameters)
-    return {id=id,shape=shape,parameters=parameters,startSteps=world.player.steps,
-        threatened=shape and Collision.hits(shape,world.player) or false,
-        hit=false,immune=false,hazards=0,projectiles=0,done=false,resolved=false}
-end
-function Skill.checkThreat(world,attack)
-    if attack.shape and Collision.hits(attack.shape,world.player) then attack.threatened=true end
-end
-function Skill.projectileThreat(world,attack,owner,angles,p)
-    for _,angle in ipairs(angles) do
-        local range=p.speed*p.lifetime
-        local bx,by=owner.rx+math.cos(angle)*range,owner.ry+math.sin(angle)*range
-        local wall=world.arena:projectileWall(owner.rx,owner.ry,bx,by,p.radius)
-        if wall then bx=owner.rx+(bx-owner.rx)*wall;by=owner.ry+(by-owner.ry)*wall end
-        if Collision.segmentCircle(owner.rx,owner.ry,bx,by,
-            world.player.rx,world.player.ry,world.player.radius+p.radius) then
-            attack.threatened=true
-        end
-    end
+    return {id=id,hazards=0,projectiles=0,done=false}
 end
 function Skill.updateEffects(world,dt)
     for i=#world.hazards,1,-1 do
         local h=world.hazards[i]
         local target=h.owner==world.player and world.boss or world.player
-        if h.attack then Skill.checkThreat(world,h.attack) end
         if not h.hit[target] and Collision.hits(h.shape,target) then
             h.hit[target]=true
             Combat.damage(world,h.owner,target,h.damage,h.status,h.attack)
@@ -58,10 +40,6 @@ function Skill.updateEffects(world,dt)
     end
     for i=#world.projectiles,1,-1 do
         local p=world.projectiles[i]
-        if p.attack then
-            Skill.projectileThreat(world,p.attack,{rx=p.x,ry=p.y},{math.atan2(p.vy,p.vx)},
-                {speed=math.sqrt(p.vx*p.vx+p.vy*p.vy),lifetime=p.remaining,radius=p.radius})
-        end
         local target=p.owner==world.player and world.boss or world.player
         local nx,ny=p.x+p.vx*dt,p.y+p.vy*dt
         local wallTime=world.arena:projectileWall(p.x,p.y,nx,ny,p.radius)
@@ -81,8 +59,7 @@ function Skill.updateEffects(world,dt)
     for i=#world.attacks,1,-1 do
         local attack=world.attacks[i]
         if attack.done and attack.hazards==0 and attack.projectiles==0 then
-            if not attack.resolved then world.training:resolveAttack(attack,world.player) end
-            attack.resolved=true;table.remove(world.attacks,i)
+            table.remove(world.attacks,i)
         end
     end
 end

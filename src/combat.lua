@@ -22,7 +22,6 @@ end
 function Combat.damage(world,source,target,amount,status,attack)
     if target.hp<=0 then return false end
     if target.invulnerable>0 then
-        if attack then attack.immune=true end
         return false
     end
     local damage=math.max(0,amount-(target.defense or 0))
@@ -31,7 +30,6 @@ function Combat.damage(world,source,target,amount,status,attack)
     target.flash=.14
     world:addVisual({kind="effect",style="hit",x=target.rx,y=target.ry},.22,source.kind)
     Combat.status(target,status)
-    if attack then attack.hit=true;attack.threatened=true end
     local stats=world.training.stats
     if target==world.player then
         stats.received=stats.received+damage;stats.hits=stats.hits+1
@@ -39,7 +37,7 @@ function Combat.damage(world,source,target,amount,status,attack)
         world.training:feedback("ACERTO RECEBIDO  -"..math.floor(damage))
     else stats.dealt=stats.dealt+damage end
     world:addText(target.rx,target.ry,"-"..math.floor(damage),target==world.player and "hurt" or "damage")
-    if target.hp<=0 then target.state="dead";target.step=nil;target.cast=nil end
+    if target.hp<=0 then target.state="dead";target.step=nil;target.cast=nil;target.dash=nil end
     return damage>0
 end
 return Combat

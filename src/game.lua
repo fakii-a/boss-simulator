@@ -71,9 +71,6 @@ function Game:update(realDt)
     end
 end
 function Game:stop(reason)
-    for _,a in ipairs(self.attacks) do
-        if a.hit and not a.resolved then self.training:resolveAttack(a,self.player);a.resolved=true end
-    end
     self.training:finish(reason or "Encerrado")
     self.input:reset()
 end

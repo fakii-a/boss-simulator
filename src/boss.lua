@@ -22,7 +22,6 @@ function Boss:begin(world,id)
     if id=="volley" then
         local aim=Skill.angle(self,world.player)
         for i=1,p.count do angles[#angles+1]=aim+(i-(p.count+1)/2)*p.angle end
-        Skill.projectileThreat(world,attack,self,angles,p)
     end
     self.cast={id=id,p=p,attack=attack,shape=shape,angles=angles,
         phase="windup",remaining=p.windup,total=p.windup,pulse=0}
@@ -42,7 +41,6 @@ function Boss:execute(world,cast)
 end
 function Boss:updateCast(dt,world)
     local cast=self.cast
-    if cast.shape then Skill.checkThreat(world,cast.attack) end
     cast.remaining=cast.remaining-dt
     if cast.remaining>1e-9 then return end
     if cast.phase=="windup" or cast.phase=="between" then

@@ -11,7 +11,7 @@ local function loadConfig(saved)
         local ok,p=pcall(function() return love.filesystem.load("settings.lua")() end)
         if ok and type(p)=="table" then
             c.training=p.training or c.training;c.movement=p.movement or c.movement
-            c.controls=p.controls or c.controls;c.arena.sqm=p.sqm or c.arena.sqm
+            c.controls=require("src.input").mergeControls(c.controls,p.controls);c.arena.sqm=p.sqm or c.arena.sqm
             for key,value in pairs(p.camera or {}) do c.camera[key]=value end
             c.bossSkills=p.bossSkills or c.bossSkills
         end
@@ -22,6 +22,9 @@ local function loadConfig(saved)
     assert(c.training.difficultyPresets[c.training.difficulty],"dificuldade inválida")
     assert(c.arena.sqm>0 and c.window.scale>0,"SQM e escala devem ser positivos")
     assert(c.camera.zoom>0,"zoom deve ser positivo")
+    local dash=c.playerSkills.dash
+    assert(dash.sqms>=1 and dash.sqms==math.floor(dash.sqms),"alcance do dash deve ser inteiro positivo")
+    assert(dash.straightStep>0 and dash.diagonalStep>0 and dash.recovery>=0,"tempos do dash inválidos")
     return c
 end
 local function reload()

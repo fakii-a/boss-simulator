@@ -28,7 +28,7 @@ function T.run()
     r,g,b=pixels:getPixel(math.floor(px),math.floor(py));assert(r>.95 and g<.05 and b<.05)
     love.graphics.setCanvas(target)
     results[#results+1]="PASS HP bars are green, energy blue and attack warnings pure red"
-    for _,style in ipairs({"basic","cut","spin","shot","impact","hit"}) do
+    for _,style in ipairs({"basic","cut","spin","shot","dash","impact","hit"}) do
         for _,progress in ipairs({0,.25,.5,.75,.95}) do
             renderer.effects:draw(renderer,{shape={kind="effect",style=style,x=11,y=12,
                 dx=1,dy=0,range=3,radius=1.65,area={cells={{x=12,y=12}}}},
@@ -53,7 +53,7 @@ function T.run()
     renderer:shape({kind="slash",x=11,y=12,dx=1,dy=0,range=1.45},.8,"player")
     w.player.hp=0;renderer.player:draw(w.player,200,300,64,0);w.player.hp=w.player.maxHp
     results[#results+1]="PASS adjustable zoom, walking views, attack effect and death fallback render"
-    assert(hud:click(1200,32)=="menu" and #hud.buttons==5)
+    assert(hud:click(1200,32)=="menu" and #hud.buttons==6)
     assert(renderer.view.x==0 and renderer.view.y==0 and renderer.view.w==1280 and renderer.view.h==820)
     for _,button in ipairs(hud.buttons) do assert(button.id=="menu" or button.id:match("^player:")) end
     results[#results+1]="PASS full-window arena and compact live HUD expose only menu and skills"
@@ -83,6 +83,11 @@ function T.run()
     hud:execute("bind:skill2",w,function()end);hud:rebind("r",w)
     assert(w.input:actionFor("r")=="skill2")
     results[#results+1]="PASS remapped gameplay keys have one action without ambiguity"
+    w.menu=false;w.config.controls.skill4={};w.input.latency=100
+    hud:execute("player:dash",w,function()end);w:update(.05);assert(not w.player.cast)
+    w:update(.06);assert(w.player.cast and w.player.cast.id=="dash")
+    w:reset(false);w.config.controls.skill4={"4"};w.menu=true
+    results[#results+1]="PASS dash HUD button works without a key binding and respects input latency"
     hud:execute("bind:skill2",w,function()end)
     assert(hud:rebind("lctrl",w) and hud.rebinding=="skill2")
     hud:rebind("escape",w)

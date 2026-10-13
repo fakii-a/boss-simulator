@@ -54,13 +54,6 @@ function Animation:draw(e,x,y,sqm,time)
         else color(1,1,1) end
         local selected=frames[index]
         g.draw(self.frameImages[selected],self.quads[selected],x,y,0,scale,sy,ox,oy)
-        if e.hp>0 then
-            if self.kind=="boss" then color(1,.05,.08,.9) else color(.3,.9,.9,.8) end
-            g.circle("line",x,y,sqm*.26)
-            -- This small marker exposes diagonal facing even with cardinal artwork.
-            local length=math.sqrt(e.faceX^2+e.faceY^2)
-            if length>0 then g.line(x,y,x+e.faceX/length*sqm*.4,y+e.faceY/length*sqm*.4) end
-        end
         return
     end
     local boss=self.kind=="boss"
@@ -72,8 +65,6 @@ function Animation:draw(e,x,y,sqm,time)
         g.pop();return
     end
     color(.02,.025,.03,.32);g.ellipse("fill",0,0,boss and 13 or 10,5)
-    if boss then color(.94,.35,.36,.7);g.ellipse("line",0,0,14,7)
-    else color(.27,.83,.87,.8);g.ellipse("line",0,0,11,5) end
     local bob=walking and ((frame==2 or frame==4) and -1.3 or 0) or math.sin(time*2)*.35
     g.translate(0,bob)
     local gait=walking and (frame%2==0 and 2 or -2) or 0

@@ -20,7 +20,7 @@ return {
         left = {"a", "left", "kp4"}, right = {"d", "right", "kp6"},
         northwest = {"kp7"}, northeast = {"kp9"},
         southwest = {"kp1"}, southeast = {"kp3"},
-        basic = {"space"}, skill1 = {"1"}, skill2 = {"2"}, skill3 = {"3"},
+        basic = {"space"}, skill1 = {"1"}, skill2 = {"2"}, skill3 = {"3"}, skill4 = {"4"},
     },
     player = {
         hp = 1000, energy = 100, energyRegen = 8, defense = 0,
@@ -35,6 +35,9 @@ return {
         rotation = {"club", "fan", "club", "combo"},
     },
     playerSkills = {
+        -- Requested training dash. Values are provisional, not verified GLA data.
+        dash = { cooldown = 5, energy = 15, windup = .10, selfStun = .10, lockMovement = true,
+            sqms = 3, straightStep = .05, diagonalStep = .075, recovery = .12 },
         -- Haki Saber: wiki confirms 2 s cooldown / +5 energy. Other values estimated.
         basic = { cooldown = 2.0, windup = 0.10, duration = 0.10, damage = 65,
             energy = 0, energyGain = 5, range = 1.45, lockMovement = true, selfStun = 0.28 },
@@ -75,6 +78,7 @@ return {
         cameraZoom = "preferência visual: 1.6x; não medido no GLA",
         basic = "Haki Saber: wiki confirma recarga 2s e ganho 5; dano/alcance/timing estimados",
         selfStun = "solicitado pelo usuário; durações totais estimadas desde o início da skill",
+        dash = "solicitado: dash de treino; alcance, tempo, custo e recarga ainda não calibrados",
         bossTempo = "ajuste de treino solicitado: tempos 30% maiores; não é calibração oficial",
         straightStep = "estimado: ~99px / ~296px/s no vídeo de caminhada",
         diagonalStep = "estimado: razão diagonal/reto ~2 no vídeo",

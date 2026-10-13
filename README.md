@@ -1,16 +1,18 @@
 # GLA Boss Fight Simulator
 
-Versão 0.4 jogável, offline, em Lua + LÖVE 11.5. HP verde, energia azul, avisos de ataque em vermelho intenso, self-stun nas habilidades e sprites fornecidas para Shanks, boss, cenário e efeitos. Arena ocupa toda a janela, com HUD compacto, contador de FPS e menu no Esc. A movimentação mantém a calibração aproximada dos vídeos do Killer com move speed 300; essa velocidade não foi confirmada para Shanks.
+Versão 0.5 jogável, offline, em Lua + LÖVE 11.5. Shanks possui dash na tecla 4; círculos de direção e sistema de pontos foram removidos. HP verde, energia azul, avisos vermelhos, self-stun e sprites fornecidas continuam disponíveis. Arena ocupa toda a janela, com HUD compacto, FPS e menu no Esc. A movimentação mantém a calibração aproximada dos vídeos do Killer com move speed 300; essa velocidade não foi confirmada para Shanks. A meta é reproduzir o GLA com referências, mas o combate ainda contém aproximações documentadas.
 
 ![Interface do simulador](docs/preview.png)
 
-Durante a luta aparecem HP, energia, vida do boss, quatro atalhos de habilidades com cooldown e FPS. Modos, frequência, dificuldade, estatísticas, reinício e encerramento ficam na aba **Treinamento** do menu. **Esc abre e fecha o menu**, pausando a simulação enquanto estiver aberto. Tab não abre mais o menu. Calibração, remapeamento e ajuda continuam acessíveis pelas outras abas. O contador usa FPS reais de renderização, inclusive durante pausa e slow motion.
+Durante a luta aparecem HP, energia, vida do boss, cinco atalhos de habilidades com cooldown e FPS. Modos, frequência, dificuldade, dados de combate, reinício e encerramento ficam na aba **Treinamento** do menu. **Esc abre e fecha o menu**, pausando a simulação enquanto estiver aberto. Tab não abre mais o menu. Calibração, remapeamento e ajuda continuam acessíveis pelas outras abas. O contador usa FPS reais de renderização, inclusive durante pausa e slow motion. Círculos com setas de orientação foram retirados de Shanks e do boss; F3 ainda mostra hitboxes apenas para depuração.
 
 ![Menu de treinamento](docs/menu-preview.png)
 
 ![Corte frontal, self-stun e aviso vermelho](docs/skill-preview.png)
 
-Todas as habilidades do Shanks deixam o personagem parado desde o início da execução. A duração total está em `config.lua → playerSkills → selfStun`: básico **0,28 s**, corte frontal **0,45 s**, circular **0,65 s**, projétil **0,40 s**. São estimativas configuráveis, não tempos medidos no GLA. Um passo em andamento fica congelado na posição interpolada e continua após o bloqueio; não há teleporte. Durante o bloqueio, novas skills e mudanças de direção são recusadas; teclas de movimento mantidas pressionadas voltam a funcionar depois. O jogador continua vulnerável. Pausa e slow motion afetam o timer junto com a simulação; cooldown é independente.
+As quatro habilidades ofensivas do Shanks deixam o personagem parado desde o início da execução. A duração total está em `config.lua → playerSkills → selfStun`: básico **0,28 s**, corte frontal **0,45 s**, circular **0,65 s**, projétil **0,40 s**. São estimativas configuráveis, não tempos medidos no GLA. Um passo em andamento fica congelado na posição interpolada e continua após o bloqueio; não há teleporte. Durante o bloqueio, novas skills e mudanças de direção são recusadas; teclas de movimento mantidas pressionadas voltam a funcionar depois. O jogador continua vulnerável. Pausa e slow motion afetam o timer junto com a simulação; cooldown é independente.
+
+O **dash [4]** é uma aproximação pedida para treinamento: **até 3 trechos de SQM**, preparação imóvel de **0,10 s**, **0,05 s por SQM reto / 0,075 s diagonal**, recuperação imóvel de **0,12 s**, custo de **15 de energia** e cooldown de **5 s**. Configure em `playerSkills.dash`. Segue a direção atual, inclusive a definida com Ctrl, para em paredes/entidades e respeita cantos bloqueados. Se usado durante um passo, congela a preparação e conclui rapidamente o trecho atual como primeiro segmento, sem saltar de posição. Bloqueia outras skills durante o deslocamento. Não causa dano nem concede invulnerabilidade; esses comportamentos dependem de confirmação nas referências. O efeito de rastro é apenas visual.
 
 Efeitos animados de corte, giro, impacto e projétil usam PNGs da pasta fornecida. O boss usa uma sprite de espadachim, com os padrões de treino anteriores, ainda baseados nas aproximações de Alvida. Trocar a aparência não significa reproduzir as habilidades oficiais desse personagem. As marcações inimigas usam vermelho saturado no aviso e na execução; não há amarelo nesses avisos.
 
@@ -38,6 +40,7 @@ Ou abra `dist\GLA-Boss-Fight-Simulator.love` com o LÖVE. O arquivo `.love` é u
 | Corte frontal | 1 |
 | Corte circular | 2 |
 | Lâmina lançada | 3 |
+| Dash | 4 |
 | Reiniciar instantaneamente | R ou F6 |
 | Pausar / continuar | P |
 | Abrir / fechar menu e pausar enquanto aberto | Esc |
@@ -52,6 +55,8 @@ Ou abra `dist\GLA-Boss-Fight-Simulator.love` com o LÖVE. O arquivo `.love` é u
 
 Todos os controles de combate e direção são configuráveis em `config.lua` ou na página **Controles** do menu Esc. Clique numa ação e pressione uma tecla. Ctrl é reservado para girar; Esc e F1–F7 são reservadas à interface. Esc cancela a escolha de tecla quando um remapeamento está em andamento. Tab pode ser remapeado como tecla de gameplay. R e P podem ser usados por habilidades remapeadas; nesse caso, F6 reinicia e Esc permite pausar pelo menu. Teclas de ação usam os nomes do LÖVE (`space`, `kp7`, `up`, etc.); não dependem do repeat do Windows.
 
+Preferências antigas recebem o novo atalho do dash sem perder seus remapeamentos. Se a tecla 4 já estiver usada em outra ação salva, escolha uma tecla para Dash em Esc → Controles; o botão da barra continua disponível.
+
 O ataque básico procura o único boss e gira para ele; seu alcance é radial. As habilidades frontais seguem a direção definida por movimento ou Ctrl + direção e guardam direção/área no início da preparação. Ctrl durante um passo deixa o passo atual terminar e impede o próximo; não teleporta nem interrompe a interpolação. Soltar Ctrl com uma direção ainda pressionada volta a andar. Não há mira pelo mouse nesta versão. Botões da barra também executam as habilidades.
 
 ## Movimentação e calibração
@@ -61,7 +66,7 @@ O ataque básico procura o único boss e gira para ele; seu alcance é radial. A
 - Primeiro passo começa no próximo tick após receber o comando. Segurar mantém passos; liberar conclui o passo atual. Um toque curto é preservado mesmo que pressione/solte entre ticks. Há apenas uma intenção recente de direção pendente, sem fila de dezenas de passos.
 - O personagem atravessa o SQM com interpolação linear, sem aceleração. A direção pode mudar no próximo SQM. Inputs opostos cancelam o eixo correspondente.
 - Paredes, caixas e entidades bloqueiam os passos. Origem e destino ficam reservados enquanto uma entidade anda. Diagonais entre cantos bloqueados são proibidas por padrão, com opção para recalibrar.
-- A hitbox acompanha os pés interpolados; o sprite não define a área de dano. Não há dash, stamina ou invulnerabilidade automática no jogador padrão.
+- A hitbox acompanha os pés interpolados, inclusive no dash; o sprite não define a área de dano. Não há stamina ou invulnerabilidade automática no jogador padrão.
 - Latência opcional atrasa press/release e habilidades em segundos da simulação. É uma aproximação de input, não uma emulação de rede do GLA.
 
 Veja [docs/REFERENCIAS.md](docs/REFERENCIAS.md) para evidências, timestamps e limites da medição. **300 é o atributo informado para Killer**, não uma fórmula que converte automaticamente em pixels/s. O SQM base de 40 px com zoom 1,6× aparece como 64 px no layout 1280 × 820; essa escolha visual não altera o tempo dos passos.
@@ -89,11 +94,11 @@ HP, danos, defesa, recuperação e restrições de movimento não estão calibra
 
 Boss Fight termina com vitória ou morte. Skill Practice repete o padrão selecionado e recupera HP do boss quando necessário; Endless também recupera HP do boss e continua a rotação. Slow Motion inicia a luta com velocidade 0,5×; o botão alterna 1×, 0,75×, 0,5× e 0,25×. Selecionar Boss Fight, Skill Practice ou Endless restaura 1×, inclusive após reduzir manualmente a velocidade. A tentativa anterior é registrada com seu modo e velocidade anteriores. A dificuldade altera dano/preparação conforme os presets e é uma ferramenta local de treino.
 
-Esquiva bem-sucedida significa: **um padrão ameaçou a hitbox durante aviso ou execução, o jogador iniciou pelo menos um passo desde o início desse aviso, e nenhum golpe desse padrão o acertou até ele terminar**. Cada combo/rajada conta uma vez, mesmo com múltiplos acertos. Falha é um padrão que acertou. Precisão = esquivas / (esquivas + falhas). Padrões sem ameaça, posicionamento já seguro e acertos bloqueados por invulnerabilidade não aumentam a precisão. Se não houver amostras, aparece `—`.
+O sistema de pontos foi removido: não há aviso “+1”, contagem de esquivas/falhas ou porcentagem de precisão. A remoção vale para a interface, o resumo e os novos CSVs. São mantidos apenas dados objetivos de combate, sem atribuir uma nota ao jogador.
 
 Ataque básico e habilidades ofensivas do jogador possuem cooldowns e custos próprios. Defesa subtrai dano por acerto, com mínimo zero. Cada área ativa acerta uma vez por alvo/pulso; projéteis usam teste do segmento percorrido, evitando atravessar alvos ou paredes em altas velocidades. Lentidão e stun são estados reutilizáveis. Invulnerabilidade só existe quando configurada; o padrão é zero, inclusive após receber dano.
 
-Esc → Treinamento mostra dano recebido, dano causado, DPS, precisão, sobrevivência e mortes da sessão. Essas estatísticas não ocupam espaço durante a luta. Tempos de combate e DPS usam segundos da simulação; o relatório também registra tempo real ativo. Pausa/menu não contam. Frames muito longos são limitados a 0,25 s para evitar uma recuperação brusca após travar/minimizar; nesses casos o relógio não tenta alcançar o tempo de parede perdido.
+Esc → Treinamento mostra dano recebido, dano causado, DPS, acertos recebidos, passos, sobrevivência e mortes da sessão. Essas informações não ocupam espaço durante a luta. Tempos de combate e DPS usam segundos da simulação; o relatório também registra tempo real ativo. Pausa/menu não contam. Frames muito longos são limitados a 0,25 s para evitar uma recuperação brusca após travar/minimizar; nesses casos o relógio não tenta alcançar o tempo de parede perdido.
 
 Fim, reinício ou encerramento geram resumo e CSV. `attempts.csv`, `settings.lua` e `test-results.txt` ficam em:
 
@@ -107,9 +112,25 @@ São guardadas até 100 tentativas da sessão no CSV; a sessão seguinte começa
 
 ## Arquitetura
 
-`main.lua` conecta callbacks do LÖVE, carregamento de configuração e interface. `src/game.lua` coordena os ticks. `movement/input/arena/collision` cuidam dos SQMs, eventos, ocupação e geometria. `combat/skill/player/boss` implementam dano, estados, cooldowns, áreas, projéteis e IA. `training` calcula métricas. `animation/renderer/hud` desenham sem determinar resultados do combate. `data` descreve os ataques; parâmetros numéricos ficam centralizados em `config.lua`.
+`main.lua` conecta callbacks do LÖVE, carregamento de configuração e interface. `src/game.lua` coordena os ticks. `movement/dash/input/arena/collision` cuidam dos SQMs, eventos, ocupação e geometria. `combat/skill/player/boss` implementam dano, estados, cooldowns, áreas, projéteis e IA. `training` registra dados de combate sem pontuação. `animation/effects/renderer/hud` desenham sem determinar resultados do combate. `data` descreve os ataques; parâmetros numéricos ficam centralizados em `config.lua`.
 
 O protótipo original foi preservado em `docs/original-main.lua`. Os PNGs selecionados estão incluídos em `assets`, sem depender da pasta Downloads durante a execução. Shanks e boss usam três folhas 128 × 128 cada, com quatro vistas de 64 × 64; diagonais reutilizam vistas cardinais. Frames corporais específicos de ataque e morte não foram identificados: ataque combina pose e sprite de efeito; morte usa a pose esmaecida. Onze texturas de efeitos são animadas em `src/effects.lua`. Chão, caixas e vegetação usam texturas fornecidas; a disposição da arena é própria do simulador. Veja [assets/README.md](assets/README.md) para o inventário e formato do carregador. Sprite, resolução e zoom não mudam o tamanho lógico das hitboxes.
+
+## Referências necessárias para aproximar o jogo do GLA
+
+Prioridade: movimento e dash reais do Shanks, depois habilidades e comportamento de um boss escolhido. Não é preciso enviar tudo de uma vez.
+
+| Material | Como registrar | O que permite calibrar |
+| --- | --- | --- |
+| Shanks andando | 10–20 s em linha reta, diagonais, toques curtos, troca de direção e Ctrl; mostre move speed, buffs, equipamento, resolução, zoom, FPS e ping | duração dos passos, resposta ao input, escala e câmera |
+| Dash do Shanks | 5 repetições reto/diagonal; parado e andando; mirando parede, canto e inimigo; mostre tecla, energia e cooldown | direção/alvo, alcance em SQMs, preparação, recuperação, colisões, dano e possível invulnerabilidade |
+| Cada skill isolada | nome e tecla, tooltip completo, 3–5 usos; segure uma direção durante o golpe; teste alvos perto/longe e de lado | self-stun, alcance, hitboxes, custo, cooldown, acertos múltiplos e cancelamentos |
+| Boss prioritário | nome, dificuldade e 2–3 lutas completas, preferencialmente solo; trechos parado e desviando, com HP visível | sequência, escolha de alvo, mudanças de fase, velocidade, avisos e momento do dano |
+| Sprites e controles | identifique arquivos de personagem/efeito, ordem dos frames e direções quando souber; screenshot dos atalhos e da interface do GLA | animações corretas, tamanho dos personagens, aparência do mapa e controles |
+
+Prefira os arquivos de vídeo originais a 60 FPS ou mais, velocidade normal, sem cortes durante uma ação, sem câmera lenta aplicada na edição e com teclado/atalhos visíveis quando possível. Informe timestamps dos exemplos relevantes. Evite efeitos de outros jogadores nos testes isolados. Nome da skill e tooltip ajudam a distinguir a mecânica de uma coincidência visual. O número de poder exibido não basta, sozinho, para determinar dano final.
+
+Se puder enviar apenas dois materiais agora: **um vídeo do dash do Shanks** e **um vídeo de caminhada com o move speed dele visível**. As durações e regras provisórias serão substituídas conforme essas medições, sem presumir mecânicas do GLA.
 
 ## Verificação
 

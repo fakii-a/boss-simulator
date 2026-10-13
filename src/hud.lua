@@ -15,7 +15,7 @@ local function color(c, a) love.graphics.setColor(c[1], c[2], c[3], a or 1) end
 local modes = { { "fight", "Boss Fight", "F1" }, { "practice", "Skill Practice", "F2" },
     { "endless", "Endless",    "F4" }, { "slow", "Slow Motion", "F7" } }
 local bindingOrder = { "up", "down", "left", "right", "northwest", "northeast", "southwest", "southeast", "basic",
-    "skill1", "skill2", "skill3" }
+    "skill1", "skill2", "skill3", "skill4" }
 local bindingNames = {
     up = "Norte",
     down = "Sul",
@@ -28,7 +28,7 @@ local bindingNames = {
     basic = "Ataque básico",
     skill1 = "Corte frontal",
     skill2 = "Corte circular",
-    skill3 = "Lâmina lançada"
+    skill3 = "Lâmina lançada", skill4 = "Dash"
 }
 function Hud.new()
     return setmetatable({
@@ -91,7 +91,7 @@ function Hud:draw(world, renderer)
     self:bar("BOSS", world.boss.hp, world.boss.maxHp, w / 2 - 150, 20, 300, 21, { .20, .78, .28 })
     self:button("menu", "Menu [Esc]", w - 116, 18, 96, 28, false)
     for i, def in ipairs(Skills.player) do
-        local x, y = w / 2 - 250 + (i - 1) * 128, h - 66
+        local x, y = w / 2 - (#Skills.player*128-12)/2 + (i - 1) * 128, h - 66
         local action = def.id == "basic" and "basic" or "skill" .. (i - 1)
         local key = string.upper(world.config.controls[action][1] or "?")
         local cd, p = world.player.cooldowns[def.id] or 0, world.config.playerSkills[def.id]
@@ -169,14 +169,13 @@ function Hud:drawTraining(world)
     self:button("toggle:grid", "Grid " .. (world.settings.grid and "ON" or "OFF"), 414, 569, 204, 30, world.settings
     .grid)
     self:text("Tentativa " .. world.training.attempt, 674, 243, "medium", colors.accent)
-    local accuracy = world.training:accuracy()
     self:row("Sobrevivência (sim.)", string.format("%.1f s", s.time), 674, 286, 396)
     self:row("Dano recebido", tostring(math.floor(s.received)), 674, 323, 396)
     self:row("Dano causado / DPS", string.format("%d / %.1f", s.dealt, world.training:dps()), 674, 360, 396)
-    self:row("Esquivas / falhas", s.avoided .. " / " .. s.failures, 674, 397, 396)
-    self:row("Precisão", accuracy and string.format("%.1f%%", accuracy) or "—", 674, 434, 396)
+    self:row("Acertos recebidos", tostring(s.hits), 674, 397, 396)
+    self:row("Passos", tostring(s.steps), 674, 434, 396)
     self:row("Mortes na sessão", tostring(world.training.deaths), 674, 471, 396)
-    self:text("Esquiva: ameaça + movimento, sem receber acerto.", 674, 526, "tiny", colors.muted)
+    self:text("Dados de combate, sem pontuação.", 674, 526, "tiny", colors.muted)
     self:text("Alvida aproximada · parâmetros ainda estimados.", 674, 550, "tiny", colors.gold)
     self:button("restart", "Reiniciar [R / F6]", 674, 590, 192, 34, false)
     self:button("stop", "Encerrar tentativa", 878, 590, 192, 34, false)
@@ -220,7 +219,7 @@ function Hud:drawMenu(world)
             colors.gold)
     elseif self.page == "controls" then
         for i, action in ipairs(bindingOrder) do
-            local x = 200 + math.floor((i - 1) / 6) * 438; local y = 243 + (i - 1) % 6 * 59
+            local x = 200 + math.floor((i - 1) / 7) * 438; local y = 237 + (i - 1) % 7 * 53
             self:text(bindingNames[action], x, y + 8, "body")
             self:button("bind:" .. action, table.concat(world.config.controls[action], " / "), x + 150, y, 252, 34,
                 self.rebinding == action)
@@ -235,7 +234,7 @@ function Hud:drawMenu(world)
         local paragraphs = {
             "MOVIMENTO · Passo reto 1/3 s e diagonal 2/3 s são estimativas do vídeo do Killer com move speed 300. A simulação usa ticks de 1/120 s e não aplica aceleração ou stamina.",
             "ALVIDA · Clava e marca em leque têm referência visual. Tempos, dano e área ainda são aproximações. Clava dupla é provisória. Projéteis são exercício demonstrativo disponível no treino individual.",
-            "ESQUIVA · Sucesso: um padrão ameaçou sua hitbox durante aviso ou execução, você iniciou ao menos um passo desde o início do aviso e não recebeu nenhum acerto. Combo/projéteis contam uma vez. Acerto é falha; posicionamento seguro e imunidade ficam fora da precisão.",
+            "DASH · Tecla 4 por padrão; até três trechos de SQM na direção atual, parando em obstáculos e entidades. Não causa dano nem concede imunidade. Tempos, alcance e custo provisórios: falta referência do GLA.",
             "TEMPO E DPS · Sobrevivência, cooldowns e DPS usam segundos da simulação. O CSV também registra tempo real ativo. Slow motion altera toda a simulação, inclusive movimentação e preparação.",
             "CALIBRAÇÃO · Edite config.lua e pressione F5. Shanks, boss e efeitos usam PNGs fornecidos. A aparência do boss não altera os padrões. Self-stun por skill em playerSkills; durações e hitboxes são estimadas.",
         }
@@ -255,8 +254,8 @@ function Hud:drawResult(world)
     self:row("Sobrevivência simulada / tempo real", string.format("%.2fs / %.2fs", s.time, s.realTime), 372, 325, 536)
     self:row("Dano recebido / dano causado", string.format("%d / %d", s.received, s.dealt), 372, 355, 536)
     self:row("DPS (segundos de simulação)", string.format("%.1f", s.dps), 372, 385, 536)
-    self:row("Esquivas / falhas", s.avoided .. " / " .. s.failures, 372, 415, 536)
-    self:row("Precisão", s.accuracy and string.format("%.1f%%", s.accuracy) or "sem amostras", 372, 445, 536)
+    self:row("Acertos recebidos", tostring(s.hits), 372, 415, 536)
+    self:row("Passos", tostring(s.steps), 372, 445, 536)
     self:row("Mortes nesta sessão", tostring(s.deaths), 372, 475, 536)
     self:text("Resumo salvo em attempts.csv no diretório de dados do LÖVE.", 372, 515, "tiny", colors.muted, 536,
         "center")
@@ -322,12 +321,8 @@ function Hud:execute(action, world, reload)
         elseif group == "toggle" then
             world.settings[value] = not world.settings[value]
         elseif group == "player" and not world.paused and not world.menu and not world.training.result then
-            local actionName = ({ basic = "basic", cut = "skill1", spin = "skill2", shot = "skill3" })[value]
-            local binding = world.config.controls[actionName][1]
-            if binding then
-                world.input:enqueue(binding, true, world.time); world.input:enqueue(binding, false,
-                    world.time + world.config.simulation.tick)
-            end
+            local actionName = ({ basic = "basic", cut = "skill1", spin = "skill2", shot = "skill3", dash = "skill4" })[value]
+            world.input:enqueueAction(actionName,world.time)
         elseif group == "adjust" then
             local delta = tonumber(amount); local m = world.config.movement
             if value == "straight" then

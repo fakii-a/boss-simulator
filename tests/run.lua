@@ -198,6 +198,59 @@ function T.run()
         end
         for i=2,#states do close(states[i].rx,states[1].rx);assert(states[i].steps==states[1].steps) end
     end)
+    test("dash travels three SQMs in eight directions with cost and recovery",function()
+        for _,d in ipairs({{1,0},{-1,0},{0,1},{0,-1},{1,1},{1,-1},{-1,1},{-1,-1}}) do
+            local w=fresh();place(w.player,10,10);w.config.player.energyRegen=0
+            w.player.faceX,w.player.faceY=d[1],d[2]
+            assert(w.player:use(w,"dash"));ticks(w,.05);close(w.player.rx,10);close(w.player.ry,10)
+            ticks(w,1);close(w.player.rx,10+d[1]*3);close(w.player.ry,10+d[2]*3)
+            close(w.player.energy,85);assert(not w.player.dash and not w.player.step)
+            assert(w.player.cooldowns.dash>0 and not w.player:use(w,"dash"))
+        end
+    end)
+    test("dash stops at walls, entities and blocked diagonal corners",function()
+        for _,entity in ipairs({false,true}) do
+            local w=fresh();place(w.player,10,10);w.player.faceX,w.player.faceY=1,0
+            if entity then place(w.boss,12,10) else w.arena.obstacles["12:10"]=true end
+            assert(w.player:use(w,"dash"));ticks(w,1);close(w.player.rx,11)
+        end
+        local w=fresh();place(w.player,10,10);w.player.faceX,w.player.faceY=1,1
+        w.arena.obstacles["11:10"]=true;assert(w.player:use(w,"dash"));ticks(w,1)
+        close(w.player.rx,10);close(w.player.ry,10)
+    end)
+    test("dash resumes a partial SQM continuously and stays vulnerable",function()
+        local w=fresh();place(w.player,10,10)
+        Movement.start(w.player,1,0,w,w.config.movement);Movement.update(w.player,.1,w.config.movement)
+        local x=w.player.rx;assert(w.player:use(w,"dash"));close(w.player.rx,x)
+        ticks(w,.05);close(w.player.rx,x);ticks(w,.07)
+        assert(w.player.rx>x and w.player.rx<11 and w.player.dash)
+        assert(not w.player:use(w,"cut"))
+        local hp=w.player.hp;Combat.damage(w,w.boss,w.player,10);close(w.player.hp,hp-10)
+        ticks(w,.14);assert(not w.player.dash and w.player.selfStunRemaining>0)
+        assert(not w.player:use(w,"cut"));ticks(w,.2);close(w.player.rx,13)
+    end)
+    test("dash obeys simulation speed and render rates and resets cleanly",function()
+        local states={}
+        for _,fps in ipairs({30,60,144}) do
+            local w=fresh();w.player.faceX,w.player.faceY=1,0;w.input:enqueue("4",true,0)
+            for _=1,fps do w:update(1/fps) end
+            states[#states+1]=w.player.rx
+        end
+        close(states[1],states[2]);close(states[1],states[3])
+        local w=fresh();w.player.faceX,w.player.faceY=1,0;w:reset(false)
+        assert(w.player:use(w,"dash"));w.settings.speed=.5;w:update(.1)
+        assert(not w.player.dash and w.player.cast)
+        w:update(.2);assert(w.player.dash)
+        local x=w.player.rx;w.paused=true;w:update(.2);close(w.player.rx,x)
+        w:reset(false);assert(not w.player.dash and not w.player.step and w.player.selfStunRemaining==0)
+    end)
+    test("old saved controls gain dash without overwriting user bindings",function()
+        local defaults=require("config").controls
+        local merged=Input.mergeControls(defaults,{skill1={"q"}})
+        assert(merged.skill1[1]=="q" and merged.skill4[1]=="4")
+        merged=Input.mergeControls(defaults,{skill1={"4"}})
+        assert(merged.skill1[1]=="4" and #merged.skill4==0)
+    end)
     test("defense, death and invulnerability require explicit configuration",function()
         local w=fresh();w.player.defense=5
         Combat.damage(w,w.boss,w.player,20);Combat.damage(w,w.boss,w.player,20)
@@ -236,36 +289,37 @@ function T.run()
             local w=fresh();place(w.boss,10,10);place(w.player,11,10)
             w.boss:begin(w,id);ticks(w,2)
             assert(w.training.stats.received>0,id.." did not hit")
-            assert(w.training.stats.failures==1,id.." did not resolve once")
+            assert(#w.attacks==0,id.." did not clean up after execution")
             if id=="combo" then assert(w.training.stats.hits==2) end
         end
     end)
-    test("threatened movement without damage counts as a dodge",function()
+    test("avoiding an attack no longer awards points or dodge scores",function()
         local w=fresh();place(w.boss,10,10);place(w.player,11,10)
         w.boss:begin(w,"club");w.input:enqueue("s",true,0);w.input:enqueue("s",false,.01)
-        ticks(w,1.2);assert(w.training.stats.avoided==1 and w.training.stats.failures==0)
-        close(w.training:accuracy(),100)
+        ticks(w,1.2);close(w.training.stats.received,0)
+        assert(w.training.stats.avoided==nil and w.training.stats.failures==nil and w.training.notice=="")
+        w:stop();assert(w.training.result.accuracy==nil and w.training.result.dps==0)
     end)
-    test("safe positioning and immunity cannot inflate dodge precision",function()
+    test("safe positioning and explicit immunity prevent damage",function()
         local w=fresh();place(w.boss,10,10);place(w.player,14,10)
         w.boss:begin(w,"club");ticks(w,1.2)
-        assert(w.training.stats.positioned==1 and w.training:accuracy()==nil)
+        assert(w.training.stats.received==0)
         place(w.player,11,10);w.player.invulnerable=3;w.boss:begin(w,"club");ticks(w,1.2)
-        assert(w.training.stats.immune==1 and w.training.stats.avoided==0)
+        assert(w.training.stats.received==0)
     end)
     test("the fatal attack is included before defeat summary",function()
         local w=fresh();place(w.boss,10,10);place(w.player,11,10);w.player.hp=10
         w.boss:begin(w,"club");ticks(w,1)
-        assert(w.training.result.reason=="Derrota" and w.training.result.failures==1 and w.training.deaths==1)
+        assert(w.training.result.reason=="Derrota" and w.training.result.received==10 and w.training.deaths==1)
     end)
-    test("ending during an active hit records a failure; walls exclude projectile threats",function()
+    test("ending during an active hit records damage; walls stop boss projectiles",function()
         local w=fresh();place(w.boss,10,10);place(w.player,11,10)
         w.boss:begin(w,"club");ticks(w,w.boss.cast.p.windup+.02);w:stop("Encerrado")
-        assert(w.training.result.failures==1)
+        assert(w.training.result.received>0 and w.training.result.hits==1)
         local blocked=fresh();place(blocked.boss,3,10);place(blocked.player,12,10)
         blocked.arena.obstacles["8:10"]=true
         blocked.boss:begin(blocked,"volley")
-        assert(not blocked.boss.cast.attack.threatened)
+        ticks(blocked,2);assert(blocked.training.stats.received==0)
     end)
     test("short taps remain buffered during a configured gap between SQMs",function()
         local w=fresh();w.config.movement.stepGap=.2
@@ -284,7 +338,7 @@ function T.run()
         close(states[1].player.hp,states[2].player.hp)
         close(states[1].boss.hp,states[2].boss.hp)
         assert(states[1].training.stats.received>0 and states[1].training.stats.dealt>0)
-        assert(states[1].training.stats.failures==states[2].training.stats.failures)
+        assert(states[1].training.stats.hits==states[2].training.stats.hits)
     end)
     test("practice and endless replenish boss; fight reports victory",function()
         for _,mode in ipairs({"fight","practice","endless"}) do
