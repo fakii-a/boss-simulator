@@ -1,6 +1,8 @@
-# Efeitos Lightning — v0.7
+# Assets e animações
 
-Seis spritesheets fornecidas pelo usuário, do pacote **Pixel Art Skill Animations – Lightning**, de **Frostwindz**, estão em `effects/lightning`. Os PNGs foram copiados sem alteração, com inventário/hashes próprios em `effects/lightning/inventory.json`. A licença fornecida está em `effects/lightning/LICENSE.docx`. As cópias integram este projeto local; a licença do pack não é substituída pela documentação do jogo.
+Os efeitos Lightning, de Frostwindz, ficam em `effects/lightning`. A licença está em `effects/lightning/LICENSE.docx`; o inventário com hashes está em `effects/lightning/inventory.json`.
+
+## Efeitos Lightning
 
 | Folha | Dimensões | Frame / quantidade | Aplicação |
 | --- | --- | --- | --- |
@@ -13,15 +15,13 @@ Seis spritesheets fornecidas pelo usuário, do pacote **Pixel Art Skill Animatio
 
 Frames em ordem de leitura, sem inverter Y. VFX6 tem cinco colunas e duas linhas; os dois últimos espaços vazios são ignorados. `data/effects.lua` configura folha, layout, duração e escala. `src/spritesheet.lua` valida as dimensões e recorta com quads; `src/effects.lua` seleciona o frame pelo tempo da simulação. As cores originais das folhas são preservadas; avisos de dano do boss continuam vermelhos.
 
-O inventário abaixo descreve os 22 PNGs anteriores, ainda disponíveis para personagens, mapa e efeitos do boss.
+O inventário de personagens, mapa e efeitos de impacto está em `inventory.json`.
 
-# Sprites fornecidas e carregador
-
-A versão 0.4 usa 22 PNGs da pasta `Grand Line Adventures/Frame_098906/LanSPR` indicada pelo usuário. Os arquivos foram copiados sem alterar seus bytes; o inventário e os hashes estão em `inventory.json`. Não é preciso manter essa pasta externa para jogar. O boss também usa sprites fornecidas.
+## Personagens, mapa e impactos
 
 | Arquivo | Uso |
 | --- | --- |
-| `player/Image_2D_5264_6629.png` | Shanks: folha indicada, quatro vistas |
+| `player/Image_2D_5264_6629.png` | Shanks: quatro vistas |
 | `player/Image_2D_2059_8444.png` | Shanks: segunda pose de caminhada |
 | `player/Image_2D_2077_8463.png` | Shanks: terceira pose de caminhada |
 | `tiles/Image_2D_6120_0069.png`, `Image_2D_6124_0071.png` | pisos de terra/areia, 32 × 32 |
@@ -33,7 +33,7 @@ A versão 0.4 usa 22 PNGs da pasta `Grand Line Adventures/Frame_098906/LanSPR` i
 | `effects/Image_2D_3187_4173.png`, `3190_4182` | anel giratório: duas texturas 256 × 256 |
 | `effects/Image_2D_1090_12279.png`, `1127_12285`, `1130_12291`, `1132_12296` | impacto: quatro texturas 256 × 256 |
 
-As folhas dos personagens medem 128 × 128. O manifesto recorta quatro regiões 64 × 64 por folha e inverte o eixo Y de cada frame ao desenhar. São 12 frames por personagem, com sequência base → pose 2 → base → pose 3 sincronizada ao passo. Direções foram inferidas visualmente e podem ser ajustadas nos manifestos. Diagonais usam vistas cardinais; os círculos de orientação foram removidos. Ausentes sequências corporais específicas de ataque e morte, usa-se idle, com sprite de efeito ou esmaecimento. Kenshi Speed usa caminhada acelerada e faíscas Lightning; não afirma reproduzir a animação oficial. Nenhuma animação completa de habilidade oficial foi afirmada como reconstruída.
+As folhas dos personagens medem 128 × 128. O manifesto recorta quatro regiões 64 × 64 por folha e inverte o eixo Y de cada frame ao desenhar. São 12 frames por personagem, com sequência base → pose 2 → base → pose 3 sincronizada ao passo. Direções são configuradas nos manifestos. Diagonais usam vistas cardinais. Ausentes sequências corporais específicas de ataque e morte, usa-se idle, com sprite de efeito ou esmaecimento. Kenshi Speed usa caminhada acelerada e faíscas Lightning.
 
 `src/effects.lua` seleciona os quadros pelo progresso em segundos da simulação, recorta margens transparentes com quads e corrige o eixo Y ao desenhar. Escala, rotação e cor são ajustes visuais locais. Os mesmos cortes são usados no projétil, que mantém colisão por segmento. Impactos aparecem nos acertos e nas colisões com paredes; os padrões de área do boss mostram impactos sobre suas células. Esses sprites não definem hitboxes.
 

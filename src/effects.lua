@@ -1,4 +1,4 @@
--- Supplied sprite sequences. Visual extents never participate in hit detection.
+-- Animated sprite sequences. Visual extents never participate in hit detection.
 local Effects = {}
 Effects.__index = Effects
 local Spritesheet = require("src.spritesheet")

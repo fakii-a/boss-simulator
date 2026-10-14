@@ -1,4 +1,4 @@
--- Small original HUD symbols, drawn in code; they are not GLA artwork.
+-- Small original HUD symbols, drawn in code; drawn independently of the combat simulation.
 local Icons = {}
 function Icons.draw(id, x, y, size)
     local g = love.graphics

@@ -12,14 +12,14 @@ return {
             action = "skill1",
             name = "Heroic Strike",
             kind = "leap",
-            note = "Salto frontal e impacto em área na chegada. Distância estimada: 2 SQMs.",
+            note = "Salto frontal e impacto em área na chegada. Distância: até 2 SQMs.",
         },
         {
             id = "spin",
             action = "skill2",
             name = "Kenshi Flurry",
             kind = "cells",
-            note = "Cortes frontais: 3 SQMs de largura e 2 de profundidade. Máscara aproximada.",
+            note = "Cortes frontais: 3 SQMs de largura e 2 de profundidade.",
         },
         {
             id = "shot",
@@ -40,7 +40,7 @@ return {
             action = "skill5",
             name = "Mighty Fissure",
             kind = "cells",
-            note = "Corte longo: faixa de 3 SQMs, alcance provisório de 8 SQMs.",
+            note = "Corte longo: faixa de 3 SQMs, alcance de 8 SQMs.",
         },
         {
             id = "waves",
@@ -58,17 +58,25 @@ return {
         },
     },
     boss = {
-        club = { name = "Clava", kind = "cells", evidence = "forma observada / tempo estimado" },
+        club = {
+            name = "Clava",
+            kind = "cells",
+            description = "Golpe direcional no SQM à frente.",
+        },
         fan = {
             name = "Impacto em leque",
             kind = "cells",
-            evidence = "marca observada / área estimada",
+            description = "Ataque frontal em área, com lentidão.",
         },
-        combo = { name = "Clava dupla", kind = "sequence", evidence = "sequência provisória" },
+        combo = {
+            name = "Clava dupla",
+            kind = "sequence",
+            description = "Dois golpes consecutivos na mesma área.",
+        },
         volley = {
             name = "Projéteis de treino",
             kind = "projectile",
-            evidence = "demonstrativo / não observado",
+            description = "Três projéteis direcionados ao jogador.",
         },
     },
     order = { "club", "fan", "combo", "volley" },

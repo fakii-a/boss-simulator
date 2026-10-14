@@ -1,4 +1,4 @@
-# Como editar o jogo sem IA
+# Guia de edição do jogo
 
 Trabalhe na pasta de código-fonte, que contém `main.lua`, `config.lua`, `src` e `assets`. Editar essa pasta não modifica automaticamente o EXE já empacotado. Faça uma cópia do arquivo antes de experimentar.
 
@@ -77,7 +77,7 @@ meuEfeito = {
 
 3. Use `sheet = "meuEfeito"` na habilidade desejada e reinicie o jogo.
 
-O carregador lê da esquerda para a direita, linha por linha. O tamanho total precisa ser divisível pelo tamanho de cada frame. `frameCount` exclui espaços vazios no fim da folha: VFX6, por exemplo, tem dez espaços, mas apenas oito frames. Folhas Lightning não usam `flipY`; as texturas antigas do GLA têm orientação própria. Use apenas assets que você tenha autorização para utilizar; a licença fornecida do pack está junto dele.
+O carregador lê da esquerda para a direita, linha por linha. O tamanho total precisa ser divisível pelo tamanho de cada frame. `frameCount` exclui espaços vazios no fim da folha: VFX6, por exemplo, tem dez espaços, mas apenas oito frames. Folhas Lightning não usam `flipY`; as texturas antigas do GLA têm orientação própria. Use apenas assets que você tenha autorização para utilizar; a licença do pack está em assets/effects/lightning/LICENSE.docx.
 
 ## Como o código funciona
 

@@ -32,7 +32,7 @@ function T.run()
         assert(renderer.tiles.images[id])
     end
     results[#results + 1] =
-        "PASS supplied Shanks frames and all map textures load in the real graphics runtime"
+        "PASS included Shanks frames and all map textures load in the real graphics runtime"
     local target = love.graphics.newCanvas(1280, 820)
     love.graphics.setCanvas(target)
     renderer:draw(w, hud.fonts)
@@ -91,7 +91,7 @@ function T.run()
     )
     renderer.boss:draw(w.boss, 400, 300, 64, 0)
     results[#results + 1] =
-        "PASS boss sprite and supplied slash, spin, hit and projectile sequences render"
+        "PASS boss sprite and included slash, spin, hit and projectile sequences render"
     local originalSqm = renderer.sqm
     hud:execute("adjust:zoom:1", w, function() end)
     renderer:camera(w)

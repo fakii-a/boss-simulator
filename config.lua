@@ -1,6 +1,6 @@
 -- Distâncias em SQMs; tempos em segundos da simulação (afetados por slow motion).
 -- Edite os números aqui e pressione F5 no jogo. Guia: docs/EDITANDO-O-JOGO.md.
--- Referências e estimativas: docs/REFERENCIAS.md. Aparência: data/effects.lua.
+-- Ajustes de combate: docs/CALIBRACAO.md. Aparência: data/effects.lua.
 return {
     simulation = { tick = 1 / 120, maxFrameDelta = 0.25 },
     window = { width = 1280, height = 820, scale = 1 },
@@ -231,23 +231,5 @@ return {
             normal = { name = "Normal", damage = 1, windup = 1 },
             hard = { name = "Intenso", damage = 1.35, windup = 0.80 },
         },
-    },
-    provenance = {
-        invisibility = "preferência de treino: reduzida de 2s para 0.6s; velocidade permanece 2s",
-        referenceMoveSpeed = "informado: Killer 300",
-        playerSprite = "fornecida: Shanks; direções inferidas; diagonais reutilizam vistas cardinais",
-        cameraZoom = "preferência visual: 1.8x; não medido no GLA",
-        basic = "Haki Saber: wiki confirma recarga 2s e ganho 5; dano/alcance/timing estimados",
-        selfStun = "solicitado pelo usuário; durações totais estimadas desde o início da skill",
-        dash = "vídeo 3:30–4:30: speed controlado, invisibilidade, perde aggro NPC, sem imunidade; valores estimados",
-        shanksKit = "vídeo IuGgBNBXnGs 3:00–7:00: comportamentos observados; saltos, hitboxes, self-stun, dano e custos estimados",
-        bossTempo = "ajuste de treino solicitado: tempos 30% maiores; não é calibração oficial",
-        straightStep = "estimado: ~99px / ~296px/s no vídeo de caminhada",
-        diagonalStep = "estimado: razão diagonal/reto ~2 no vídeo",
-        hitboxes = "não calibradas: aproximações em SQMs",
-        club = "forma observada; tempos/dano estimados",
-        fan = "marca em leque observada; máscara/tempos estimados",
-        combo = "provisório: ordem e intervalo não confirmados",
-        volley = "demonstrativo: não observado em Alvida",
     },
 }

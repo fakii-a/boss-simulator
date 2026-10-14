@@ -11,7 +11,7 @@ dist=root/'dist';dist.mkdir(exist_ok=True)
 game_files=[root/name for name in ['main.lua','conf.lua','config.lua']]
 for directory in ['src','data','assets','tests']:
     game_files.extend(p for p in (root/directory).rglob('*') if p.is_file())
-game_files+= [root/'README.md',root/'docs/REFERENCIAS.md',root/'docs/VALIDACAO.md',
+game_files+= [root/'README.md',root/'docs/CALIBRACAO.md',root/'docs/VALIDACAO.md',
               root/'docs/EDITANDO-O-JOGO.md',root/'docs/TEST-RESULTS.txt',root/'docs/preview.png',root/'docs/menu-preview.png',root/'docs/skill-preview.png']
 game_files=sorted(game_files)
 love_path=dist/'GLA-Boss-Fight-Simulator.love'
@@ -36,7 +36,7 @@ with zipfile.ZipFile(portable,'w',zipfile.ZIP_DEFLATED) as z:
     # Runtime redistribution includes the bundled licenses for LÖVE and dependencies.
     z.write(runtime/'license.txt',prefix+'LOVE-license.txt')
     z.write(root/'README.md',prefix+'README.md')
-    z.write(root/'docs/REFERENCIAS.md',prefix+'docs/REFERENCIAS.md')
+    z.write(root/'docs/CALIBRACAO.md',prefix+'docs/CALIBRACAO.md')
     z.write(root/'docs/VALIDACAO.md',prefix+'docs/VALIDACAO.md')
     z.write(root/'docs/EDITANDO-O-JOGO.md',prefix+'docs/EDITANDO-O-JOGO.md')
     z.write(root/'docs/TEST-RESULTS.txt',prefix+'docs/TEST-RESULTS.txt')

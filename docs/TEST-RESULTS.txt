@@ -48,9 +48,9 @@ PASS slow motion scales the entire simulation and pause freezes it
 PASS restart clears inputs and effects while preserving session deaths
 PASS pathfinding routes around obstacles to a reachable adjacent SQM
 PASS six Lightning sheets load; second row skips the two unused slots
-PASS supplied Shanks frames and all map textures load in the real graphics runtime
+PASS included Shanks frames and all map textures load in the real graphics runtime
 PASS HP bars are green, energy blue and attack warnings pure red
-PASS boss sprite and supplied slash, spin, hit and projectile sequences render
+PASS boss sprite and included slash, spin, hit and projectile sequences render
 PASS adjustable zoom, walking views, attack effect and death fallback render
 PASS full-window arena and compact live HUD expose only menu and skills
 PASS training, calibration, controls and help pages render inside the menu

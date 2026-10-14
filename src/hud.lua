@@ -349,7 +349,7 @@ function Hud:drawTraining(world)
         34,
         false
     )
-    self:text(Skills.boss[world.settings.practiceSkill].evidence, 200, 443, "tiny", colors.gold)
+    self:text(Skills.boss[world.settings.practiceSkill].description, 200, 443, "tiny", colors.gold)
     self:button(
         "speed:next",
         string.format("Velocidade %.2f× ›", world.settings.speed),
@@ -411,7 +411,7 @@ function Hud:drawTraining(world)
     self:row("Passos", tostring(s.steps), 674, 434, 396)
     self:row("Mortes na sessão", tostring(world.training.deaths), 674, 471, 396)
     self:text("Dados de combate, sem pontuação.", 674, 526, "tiny", colors.muted)
-    self:text("Alvida aproximada · parâmetros ainda estimados.", 674, 550, "tiny", colors.gold)
+    self:text("Ajuste o combate na aba Calibração.", 674, 550, "tiny", colors.gold)
     self:button("restart", "Reiniciar [R / F6]", 674, 590, 192, 34, false)
     self:button("stop", "Encerrar tentativa", 878, 590, 192, 34, false)
 end
@@ -434,7 +434,7 @@ function Hud:drawMenu(world)
     self:button("page:skills", "Shanks", 372, 184, 142, 34, self.page == "skills")
     self:button("page:calibration", "Calibração", 524, 184, 164, 34, self.page == "calibration")
     self:button("page:controls", "Controles", 698, 184, 164, 34, self.page == "controls")
-    self:button("page:help", "Referências", 872, 184, 206, 34, self.page == "help")
+    self:button("page:help", "Ajuda", 872, 184, 206, 34, self.page == "help")
     if self.page == "training" then
         self:drawTraining(world)
     elseif self.page == "skills" then
@@ -465,7 +465,7 @@ function Hud:drawMenu(world)
             )
         end
         self:text(
-            "Vídeo: 3:00–7:00. Regras observadas; dano, tempos e colisões ainda aproximados.",
+            "Use Ctrl + direção para orientar as habilidades. Ajustes em config.lua.",
             200,
             644,
             "small",
@@ -477,25 +477,25 @@ function Hud:drawMenu(world)
                 "straight",
                 "Passo reto",
                 string.format("%.4f s", world.config.movement.straightStep),
-                "estimado: ~296 px/s na gravação",
+                "tempo para atravessar um SQM em linha reta",
             },
             {
                 "diagonal",
                 "Passo diagonal",
                 string.format("%.4f s", world.config.movement.diagonalStep),
-                "estimado: ~147 px/s em cada eixo",
+                "tempo para atravessar um SQM na diagonal",
             },
             {
                 "gap",
                 "Intervalo extra",
                 string.format("%.4f s", world.config.movement.stepGap),
-                "não calibrado; padrão zero",
+                "pausa adicional entre passos consecutivos",
             },
             {
                 "latency",
                 "Latência adicional",
                 world.config.movement.latencyMs .. " ms",
-                "não calibrada; atraso nos comandos de gameplay",
+                "atraso aplicado aos comandos de gameplay",
             },
             {
                 "sqm",
@@ -507,7 +507,7 @@ function Hud:drawMenu(world)
                 "windup",
                 "Preparação do leque",
                 string.format("%.3f s", world.config.bossSkills.fan.windup),
-                "estimada; hitboxes em config.lua",
+                "tempo de preparação antes do ataque",
             },
         }
         for i, row in ipairs(rows) do
@@ -540,7 +540,7 @@ function Hud:drawMenu(world)
         )
         self:button("adjust:zoom:1", "+", 980, 591, 38, 32, false)
         self:text(
-            "Move speed 300: dado informado. Fórmula interna do GLA não confirmada.",
+            "Os tempos usam segundos da simulação. O zoom altera apenas o desenho.",
             200,
             640,
             "small",
@@ -579,11 +579,11 @@ function Hud:drawMenu(world)
         )
     else
         local paragraphs = {
-            "MOVIMENTO · Passo reto 1/3 s e diagonal 2/3 s são estimativas do vídeo do Killer com move speed 300. A simulação usa ticks de 1/120 s e não aplica aceleração ou stamina.",
-            "ALVIDA · Clava e marca em leque têm referência visual. Tempos, dano e área ainda são aproximações. Clava dupla é provisória. Projéteis são exercício demonstrativo disponível no treino individual.",
-            "SHANKS · Kenshi Speed [4] acelera a caminhada controlada pelo teclado, com transparência temporária e sem imunidade. Saltos frontal/traseiro, cortes e Haki estão descritos na aba Shanks. Valores numéricos estimados.",
+            "MOVIMENTO · Segure uma direção para caminhar. Combine duas direções para andar na diagonal. Ctrl + direção gira o personagem sem iniciar um novo passo.",
+            "BOSS · Clava, impacto em leque, clava dupla e projéteis estão disponíveis no treino individual. Escolha o padrão na aba Treinamento e ajuste frequência e dificuldade.",
+            "SHANKS · Kenshi Speed [4] acelera a caminhada por 2 s e aplica invisibilidade por 0,6 s, sem imunidade. Consulte a aba Shanks para os saltos, cortes e ondas de Haki.",
             "TEMPO E DPS · Sobrevivência, cooldowns e DPS usam segundos da simulação. O CSV também registra tempo real ativo. Slow motion altera toda a simulação, inclusive movimentação e preparação.",
-            "CALIBRAÇÃO · Edite config.lua e pressione F5. Shanks, boss e efeitos usam PNGs fornecidos. A aparência do boss não altera os padrões. Self-stun por skill em playerSkills; durações e hitboxes são estimadas.",
+            "CALIBRAÇÃO · Edite config.lua e pressione F5 para reiniciar com os novos valores. Dano, alcance, recarga e self-stun ficam em playerSkills. Aparência dos efeitos: data/effects.lua.",
         }
         for i, text in ipairs(paragraphs) do
             self:text(

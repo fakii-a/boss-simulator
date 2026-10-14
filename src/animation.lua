@@ -1,4 +1,4 @@
--- Optional authorized sprites: see assets/README.md. Graphics never modify combat.
+-- Character sprite manifests: see assets/README.md. Graphics never modify combat.
 local Animation = {}
 Animation.__index = Animation
 local dirs = {
