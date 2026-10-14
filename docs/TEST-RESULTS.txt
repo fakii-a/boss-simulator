@@ -15,13 +15,22 @@ PASS directional attack masks reach an adjacent SQM in all eight directions
 PASS entity collisions reserve both endpoints of an active step
 PASS no teleport: hitbox follows interpolated feet
 PASS cooldowns are independent and energy prevents invalid casts
-PASS all Shanks skills freeze an in-progress step and prevent action chaining
+PASS stationary Shanks skills freeze an in-progress step and prevent action chaining
 PASS self-stun accepts skill before movement and follows slow motion and pause
 PASS self-stun and movement resumption are identical across render rates
-PASS dash travels three SQMs in eight directions with cost and recovery
-PASS dash stops at walls, entities and blocked diagonal corners
-PASS dash resumes a partial SQM continuously and stays vulnerable
-PASS dash obeys simulation speed and render rates and resets cleanly
+PASS Kenshi Speed requires directional input and grants no immunity
+PASS short invisibility ends before speed and permits boss acquisition again
+PASS speed activation and expiry retime partial steps without teleporting
+PASS invisibility suspends acquisition, not committed attacks or collision
+PASS front and back leaps preserve facing and move two SQMs in eight directions
+PASS leaps stop at walls, entities and blocked diagonal corners
+PASS leap resumes a partial SQM continuously and locks skills until recovery ends
+PASS repositioning combos damage from landing positions with independent cooldowns
+PASS retreat during a forward step finishes that segment before moving backwards
+PASS Flurry and Fissure hit frontal lanes but not the rear or outside width
+PASS Haki Waves deals exactly three hits and reapplies stun
+PASS large Haki stuns a distant boss without level-based execution
+PASS new skills obey render rates, simulation speed, pause and reset
 PASS old saved controls gain dash without overwriting user bindings
 PASS defense, death and invulnerability require explicit configuration
 PASS swept projectile hits small targets and stops behind obstacles
@@ -38,6 +47,7 @@ PASS practice and endless replenish boss; fight reports victory
 PASS slow motion scales the entire simulation and pause freezes it
 PASS restart clears inputs and effects while preserving session deaths
 PASS pathfinding routes around obstacles to a reachable adjacent SQM
+PASS six Lightning sheets load; second row skips the two unused slots
 PASS supplied Shanks frames and all map textures load in the real graphics runtime
 PASS HP bars are green, energy blue and attack warnings pure red
 PASS boss sprite and supplied slash, spin, hit and projectile sequences render
@@ -47,9 +57,9 @@ PASS training, calibration, controls and help pages render inside the menu
 PASS Escape toggles the menu, freezes simulation, clears held input and exposes training controls
 PASS calibration buttons change timing and latency
 PASS remapped gameplay keys have one action without ambiguity
-PASS dash HUD button works without a key binding and respects input latency
+PASS Kenshi Speed HUD button works without a key binding and respects input latency
 PASS HUD mode switches restore speed and Ctrl stays reserved for facing
 PASS performance summary renders with working restart control
 PASS pause and scaled viewport render without graphics errors
 PASS wide and tall viewports keep the arena full-window and menu clicks aligned
-54 tests passed
+64 tests passed

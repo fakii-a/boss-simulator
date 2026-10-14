@@ -1,3 +1,43 @@
+# Revisão visual e legibilidade — v0.7, 14/10/2026
+
+Pedido do usuário: usar as folhas de `Pixel Art Skill Animations - Lightning`, diminuir invisibilidade e facilitar edição do código. Foram examinadas as seis folhas, suas dimensões, transparência e arquivos de frames. Elas são efeitos visuais escolhidos para este simulador, não uma nova referência das habilidades oficiais do GLA.
+
+Invisibilidade agora dura **0,6 s**; velocidade continua **2 s**. É um ajuste solicitado para treino. Números anteriores nesta análise são históricos. A organização em quatro espaços, nomes de parâmetros mais claros e separação do fluxo do jogador mantém as regras de combate; os testes de regressão cobrem essa preservação.
+
+Guia de edição: `EDITANDO-O-JOGO.md`. Mapeamento visual: `data/effects.lua`. Inventário das novas folhas: `assets/effects/lightning/inventory.json`.
+
+# Revisão Shanks — v0.6, 14/10/2026
+
+Fonte prioritária desta revisão: [vídeo fornecido, IuGgBNBXnGs, 3:00–7:00](https://www.youtube.com/watch?v=IuGgBNBXnGs&t=180s). Metadados da cópia local identificam o vídeo “O ÚLTIMO IMPERADOR DA ANTIGA GERAÇÃO: SHANKS O RUIVO !”, publicado em 01/10/2024. Foram examinados quadros extraídos e legendas automáticas em português; nomes e transcrição podem conter erros. Os nomes/ordem do kit foram conferidos na [wiki de Shanks](https://wiki.gla.com.br/index.php/Shanks), consultada em 14/10/2026. Vídeo e recortes são material de análise local e não entram nos pacotes do jogo.
+
+Os timestamps abaixo localizam aproximadamente a **explicação na legenda do vídeo original**, não são medições quadro a quadro. Os recortes locais podem ter deslocamento de keyframe; seus rótulos não foram usados para alegar durações exatas.
+
+| Trecho aproximado | Evidência | Decisão no simulador |
+| --- | --- | --- |
+| 3:00–3:05, repetição 3:18–3:28 | Salto para a frente com dano em área; uso ofensivo ou para fugir | Heroic Strike com deslocamento e impacto ao chegar |
+| 3:06–3:17 | Corte que alcança os SQMs à frente; explicação menciona três posições e distância de dois SQMs | Kenshi Flurry usa máscara inicial 3 de largura × 2 de profundidade, a validar |
+| 3:30–3:50 | Narrador corrige “dash” para speed; exige caminhar, invisibilidade temporária | Kenshi Speed não desloca automaticamente; buff controlado por input |
+| 3:51–4:00 | Salto para trás e dano à frente; demonstração visual do recuo/corte | Ryusosen preserva orientação durante o recuo |
+| 4:08–4:31 | Narração afirma ausência de imunidade e perda do aggro de NPCs | Continua vulnerável; boss não adquire alvo invisível; ataques comprometidos continuam por escolha local |
+| 4:35–4:53 | Corte reto longo, incluindo laterais; narrador diz “se não me engano oito tiles” | Mighty Fissure: 3 de largura, 8 de alcance provisório |
+| 4:54–5:09 | Três ondas ao redor do corpo; quadros mostram ícones de stun nos alvos | Haki Waves em três pulsos, cada um com dano e stun |
+| 5:30–6:13 | Haki maior; explicação de execução por diferença de 11 níveis; menciona stun | Haki amplo com stun; execução por nível não aplicada ao boss |
+| 6:15–6:42 | Combina saltos e cortes para reposicionar | Skills têm cooldowns independentes; encadeamento após recuperação |
+
+## Estimativas que continuam abertas
+
+Todos os custos/danos e cooldowns especiais usam escala de treino, não números oficiais. Não foi possível medir exatamente self-stun, aquisição de alvo, distância de salto, fator/duração do speed, máscara diagonal ou regras contra paredes/entidades. A versão de 2024 mostrada no vídeo pode diferir do GLA atual; nenhum patch posterior foi presumido.
+
+Parâmetros iniciais: saltos de 2 SQMs, 0,10 s por segmento reto / 0,14 s diagonal, recuperação 0,18 s; speed 2 s e multiplicador 0,40 no tempo do passo; flurry 2×3; fissure 8×3; ondas com raio 1,65 e três pulsos separados por 0,80 s; Haki maior com raio 4,5. Duração de stun 0,45 s nas ondas e 2 s no Haki amplo. `config.lua` contém todos os valores e `provenance` identifica a origem.
+
+Colisões dos saltos são conservadoras, sem atravessar obstáculos/entidades e sem invulnerabilidade. Um passo parcial é concluído continuamente. Ao recuar durante avanço, termina o segmento antes de recuar os dois SQMs; essa regra é local e precisa de comparação. Self-stun de início/recuperação foi mantido conforme pedido do usuário, com tempos estimados. A invisibilidade usa transparência visual e suspende novas decisões de alvo do boss solo, sem apagar efeitos já lançados. Hitboxes de áreas não são recortadas por paredes.
+
+Efeitos usam as sequências autorizadas já disponíveis; não foram identificadas as texturas exatas de cada skill mostrada no vídeo. Os ícones pequenos da interface são desenhos próprios em código. A execução por diferença de nível não foi adicionada porque não há sistema de níveis e o vídeo não confirma sua aplicação a este boss.
+
+## Histórico das referências anteriores
+
+As seções abaixo registram as entregas anteriores. Afirmações sobre golpes genéricos ou ausência de habilidades especiais descrevem aquelas versões e são substituídas pela revisão v0.6 acima.
+
 # Análise inicial — 13/10/2026
 
 Fontes prioritárias: os três MKVs fornecidos pelo usuário. Todos: 1920 × 1080, 60 FPS. Durações: caminhada 22,450 s; Killer 23,833 s; Alvida/Yamato 31,133 s. Os quadros em `reference/` são material de análise, não assets do jogo e não entram no pacote executável.

@@ -1,30 +1,22 @@
-# Verificação da entrega v0.5 — 13/10/2026
+# Verificação v0.7 — 14/10/2026
 
-- Runtime real: LÖVE 11.5 instalado em `C:\Program Files\LOVE` e LuaJIT de sua `lua51.dll`.
-- Compilação dos módulos Lua verificada antes da execução dos testes.
-- **54 testes passaram**, incluindo 40 testes de simulação e 14 de interface/recursos gráficos.
-- Dash: oito direções, custo/cooldown, preparação/recuperação, retomada de passo parcial sem teleporte, vulnerabilidade, paredes/entidades/cantos, pausa/slow motion/reset e equivalência de FPS verificados.
-- Preferências antigas recebem o novo controle sem sobrescrever teclas remapeadas; a barra possui cinco habilidades e o menu comporta Dash.
-- Pontuação removida: ataques evitados não geram bônus nem campos de precisão/esquivas nos resultados. Dano e acertos continuam registrados.
-- Círculos de orientação removidos das sprites e placeholders; capturas atualizadas inspecionadas.
-- Self-stun das quatro habilidades verificado durante passos: posição e fase congeladas, bloqueio de novas skills, retomada, vulnerabilidade, reset, pausa, slow motion e equivalência a 30/60/144 FPS.
-- Pixels renderizados conferidos: ambas as barras de HP verdes, energia azul e aviso de ataque vermelho puro.
-- Sprite do boss e sequências de corte, giro, impacto e projétil carregadas e desenhadas no runtime real. Captura `skill-preview.png` inspecionada.
-- HUD durante a luta contém apenas os botões de habilidades e menu, sem controles de treinamento fora dele. A arena usa toda a janela.
-- Esc abre/fecha o menu e congela a simulação; Tab não aciona o menu. Inputs pendentes são limpos e a retomada não inicia passos indevidos.
-- Janelas largas e altas verificadas: arena sem margens de interface, menu centralizado e áreas de clique alinhadas. Trocar modo dentro do menu mantém a simulação pausada.
-- Capturas `preview.png` e `menu-preview.png` inspecionadas; contador de FPS visível no canto superior direito.
-- Ctrl esquerdo/direito, oito direções, toque curto, teclas simultâneas/opostas, latência, liberação do modificador e giro durante um passo verificados sem passos extras.
-- Sair de Slow Motion para Boss Fight, Skill Practice e Endless restaura 1×; o histórico preserva o modo e a velocidade da tentativa anterior.
-- Haki Saber: cooldown, ganho de energia limitado ao máximo e ausência de ganho fora do alcance verificados.
-- Carregamento real dos 12 frames de Shanks e cinco texturas do mapa, vistas de caminhada, efeito de corte, fallback de morte e zoom ajustável exercitados no LÖVE.
-- Os 22 PNGs incluídos foram comparados byte a byte aos arquivos da pasta indicada; hashes em `assets/inventory.json`.
-- Mesma posição e número de passos a 30, 60 e 144 FPS; IA e dano também comparados entre 30 e 144 FPS.
-- A janela do jogo foi aberta pelo runtime e a captura `preview.png` foi inspecionada.
-- Telas de calibração, controles, ajuda, pausa, resumo e viewport escalado exercitadas no LÖVE real.
-- O arquivo `.love` empacotado passou nos mesmos testes.
-- ZIP portátil extraído, EXE com as DLLs incluídas executado: relatório com **54 testes passaram**. A gravação do relatório foi confirmada no diretório próprio do EXE.
-- ZIPs e `.love` verificados com teste de integridade; hashes e tamanhos em `dist/manifest.json`.
-- Vídeos foram analisados visualmente por quadros e o deslocamento do cenário medido por fluxo óptico. Isso fornece estimativas de movimentação, não comprova hitboxes internas, cooldowns nem rotação oficial.
+Runtime: LÖVE 11.5 e LuaJIT instalados em `C:\Program Files\LOVE`.
 
-Veja `TEST-RESULTS.txt` para o relatório. Não foi realizada uma comparação controlada lado a lado com captura de input do GLA. A fidelidade quantitativa de combate ainda exige calibração; clava dupla/projéteis estão identificados como provisórios/demonstrativos.
+- 27 módulos Lua passaram na verificação sintática. Fontes, dados, testes e manifestos foram formatados com StyLua 2.6.0, usando verificação de equivalência sintática (`--verify`); `python tools/format.py --check` passou.
+- **64 testes passaram**: 49 de simulação e 15 de interface/recursos no LÖVE real. Relatório em `TEST-RESULTS.txt`.
+- Seis folhas Lightning carregadas no runtime gráfico, com 4/4/5/5/4/8 frames. A troca de linha da VFX6 foi verificada, excluindo os dois espaços vazios finais. PNGs copiados byte a byte; hashes no inventário próprio do pack.
+- Invisibilidade de 0,6 s termina antes do bônus de velocidade de 2 s; aquisição do alvo pelo boss retorna enquanto o bônus ainda está ativo. Nenhuma imunidade foi acrescentada.
+- Separação do fluxo do jogador e renomeação de parâmetros cobertas pelos testes de regressão. Guia de edição manual incluído em `EDITANDO-O-JOGO.md`.
+- Kenshi Speed exige direção, mantém colisão e vulnerabilidade; início/fim do buff retimam passos parciais sem teleporte. Lentidão e velocidade combinam seus multiplicadores.
+- Invisibilidade impede novas aquisições do boss; ataques já preparados continuam e o alvo volta a ser adquirido depois.
+- Saltos frontal/traseiro exercitados nas oito direções, com paredes, entidades, cantos, energia, cooldown e preservação da orientação. Recuo durante avanço conclui o segmento antes da mudança.
+- Combo salto/recuo aplica dano a partir das posições finais; self-stun impede encadeamento antes da recuperação.
+- Flurry/Fissure acertam faixas frontais; testes excluem retaguarda e SQMs fora da largura/alcance.
+- Haki Waves causa exatamente três acertos e reaplica stun; Haki amplo atinge alvo distante sem execução por nível.
+- Posições/energia comparadas a 30, 60 e 144 FPS; pausa, slow motion e reinício cobrem os estados novos.
+- HUD real renderiza oito ícones, cinco abas do menu, HP verde, energia azul, avisos vermelhos e FPS. Botões respeitam latência e funcionam mesmo sem tecla associada.
+- Testes anteriores de Ctrl, input, movimento, projéteis, dano, IA, treino, saída de slow motion, métricas sem pontos e viewport continuam passando.
+- Capturas de jogo, menu e efeito atualizadas e inspecionadas.
+- Pacotes `.love` e EXE portátil validados com a mesma suíte; ZIPs verificados por integridade e hashes em `dist/manifest.json`.
+
+A validação confirma consistência do simulador, não igualdade numérica com GLA. A análise usou quadros e legendas da referência; não houve captura sincronizada de teclado nem medição controlada de latência/self-stun. As aproximações restantes estão em `REFERENCIAS.md` e `config.lua`.

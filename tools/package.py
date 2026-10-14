@@ -12,7 +12,7 @@ game_files=[root/name for name in ['main.lua','conf.lua','config.lua']]
 for directory in ['src','data','assets','tests']:
     game_files.extend(p for p in (root/directory).rglob('*') if p.is_file())
 game_files+= [root/'README.md',root/'docs/REFERENCIAS.md',root/'docs/VALIDACAO.md',
-              root/'docs/TEST-RESULTS.txt',root/'docs/preview.png',root/'docs/menu-preview.png',root/'docs/skill-preview.png']
+              root/'docs/EDITANDO-O-JOGO.md',root/'docs/TEST-RESULTS.txt',root/'docs/preview.png',root/'docs/menu-preview.png',root/'docs/skill-preview.png']
 game_files=sorted(game_files)
 love_path=dist/'GLA-Boss-Fight-Simulator.love'
 with zipfile.ZipFile(love_path,'w',zipfile.ZIP_DEFLATED) as z:
@@ -20,7 +20,8 @@ with zipfile.ZipFile(love_path,'w',zipfile.ZIP_DEFLATED) as z:
     for path in game_files: z.write(path,path.relative_to(root).as_posix())
 
 source_path=dist/'GLA-Boss-Fight-Simulator-Source.zip'
-source_files=game_files+[root/'tools/package.py',root/'docs/original-main.lua',root/'.gitignore']
+source_files=game_files+[root/'tools/package.py',root/'tools/format.py',root/'docs/original-main.lua',
+                        root/'.gitignore',root/'.stylua.toml',root/'.editorconfig']
 with zipfile.ZipFile(source_path,'w',zipfile.ZIP_DEFLATED) as z:
     for name in ['player','bosses','effects','tiles']: z.writestr('gla-boss-simulator/assets/'+name+'/',b'')
     for path in source_files: z.write(path,'gla-boss-simulator/'+path.relative_to(root).as_posix())
@@ -37,6 +38,7 @@ with zipfile.ZipFile(portable,'w',zipfile.ZIP_DEFLATED) as z:
     z.write(root/'README.md',prefix+'README.md')
     z.write(root/'docs/REFERENCIAS.md',prefix+'docs/REFERENCIAS.md')
     z.write(root/'docs/VALIDACAO.md',prefix+'docs/VALIDACAO.md')
+    z.write(root/'docs/EDITANDO-O-JOGO.md',prefix+'docs/EDITANDO-O-JOGO.md')
     z.write(root/'docs/TEST-RESULTS.txt',prefix+'docs/TEST-RESULTS.txt')
     z.write(root/'docs/preview.png',prefix+'docs/preview.png')
     z.write(root/'docs/menu-preview.png',prefix+'docs/menu-preview.png')

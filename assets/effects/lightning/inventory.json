@@ -1,0 +1,42 @@
+{
+  "source": "Pixel Art Skill Animations - Lightning, supplied by user",
+  "author": "Frostwindz",
+  "files": [
+    {
+      "file": "assets/effects/lightning/vfx1.png",
+      "original": "VFX1\\Sprite-sheet\\Sprite-sheet.png",
+      "bytes": 5124,
+      "sha256": "ff47cb8644894af0de6897baacef5ce37eaa4d3b221bd06970e542e1c37f8cb4"
+    },
+    {
+      "file": "assets/effects/lightning/vfx2.png",
+      "original": "VFX2\\Sprite-sheet\\Sprite-sheet.png",
+      "bytes": 6793,
+      "sha256": "2e2511b05ec236fdcfda0465ec75e24151bfb8ae9d04f4d075b1fd506c2dc834"
+    },
+    {
+      "file": "assets/effects/lightning/vfx3.png",
+      "original": "VFX3\\Sprite-sheet\\Sprite-sheet.png",
+      "bytes": 13278,
+      "sha256": "a977141f70245800a1301f441029d8f6a65cb82cf5461d685044f57529643eb4"
+    },
+    {
+      "file": "assets/effects/lightning/vfx4.png",
+      "original": "VFX4\\Sprite-sheet\\Sprite-sheet.png",
+      "bytes": 14867,
+      "sha256": "194e5731f071dd7c22c5dc0427c238061f8996230405fd327c852aff932da996"
+    },
+    {
+      "file": "assets/effects/lightning/vfx5.png",
+      "original": "VFX5\\Sprite-sheet\\Sprite-sheet.png",
+      "bytes": 11260,
+      "sha256": "56f67235a939045ed34181896d7d0f94f6d4b2f2cfbd3a994c2d91c631f9e470"
+    },
+    {
+      "file": "assets/effects/lightning/vfx6.png",
+      "original": "VFX6\\Sprite-sheet\\Sprite-sheet.png",
+      "bytes": 8571,
+      "sha256": "e053e996213d0b267aedf314af08a71e585f27f0701734ec15d2dd22a334fc19"
+    }
+  ]
+}

@@ -1,36 +1,72 @@
 local Movement = {}
-function Movement.initialize(e,x,y)
-    e.x,e.y,e.rx,e.ry=x,y,x,y
-    e.faceX,e.faceY=0,1
-    e.step,e.gap=nil,0
-    e.walkPhase,e.steps=0,0
+function Movement.initialize(entity, x, y)
+    entity.x, entity.y, entity.rx, entity.ry = x, y, x, y
+    entity.faceX, entity.faceY = 0, 1
+    entity.step, entity.gap = nil, 0
+    entity.walkPhase, entity.steps = 0, 0
 end
-function Movement.start(e,dx,dy,world,settings)
-    if e.step or e.gap>1e-9 or e.hp<=0 or (e.status.stun or 0)>0 or (e.selfStunRemaining or 0)>1e-9 then return false end
-    if dx==0 and dy==0 then return false end
-    e.faceX,e.faceY=dx,dy
-    if not world.arena:canStep(e,dx,dy,world.entities,settings.blockDiagonalCorners) then return false end
-    local duration=(dx~=0 and dy~=0) and settings.diagonalStep or settings.straightStep
-    duration=duration*(e.status.slow and e.status.slow.multiplier or 1)
-    e.step={fromX=e.x,fromY=e.y,elapsed=0,duration=duration}
-    e.x,e.y=e.x+dx,e.y+dy
-    e.steps=e.steps+1
-    e.state="moving"
+
+function Movement.start(entity, dx, dy, world, settings)
+    if
+        entity.step
+        or entity.gap > 1e-9
+        or entity.hp <= 0
+        or (entity.status.stun or 0) > 0
+        or (entity.selfStunRemaining or 0) > 1e-9
+    then
+        return false
+    end
+    if dx == 0 and dy == 0 then
+        return false
+    end
+    entity.faceX, entity.faceY = dx, dy
+    if not world.arena:canStep(entity, dx, dy, world.entities, settings.blockDiagonalCorners) then
+        return false
+    end
+    local duration = (dx ~= 0 and dy ~= 0) and settings.diagonalStep or settings.straightStep
+    entity.step = {
+        fromX = entity.x,
+        fromY = entity.y,
+        elapsed = 0,
+        duration = duration,
+        baseDuration = duration,
+    }
+    Movement.retime(entity)
+    entity.x, entity.y = entity.x + dx, entity.y + dy
+    entity.steps = entity.steps + 1
+    entity.state = "moving"
     return true
 end
-function Movement.update(e,dt,settings)
-    if e.step then
-        local s=e.step
-        s.elapsed=math.min(s.duration,s.elapsed+dt)
-        local t=s.elapsed/s.duration
-        e.rx,e.ry=s.fromX+(e.x-s.fromX)*t,s.fromY+(e.y-s.fromY)*t
-        e.walkPhase=t
-        if t>=1-1e-9 then
-            e.rx,e.ry=e.x,e.y;e.step=nil
-            e.gap=settings.stepGap or 0
+
+function Movement.retime(entity)
+    local step = entity.step
+    if not step or not step.baseDuration then
+        return
+    end
+    local phase = step.elapsed / step.duration
+    step.duration = step.baseDuration
+        * (entity.status.slow and entity.status.slow.multiplier or 1)
+        * (entity.status.speed and entity.status.speed.multiplier or 1)
+    step.elapsed = phase * step.duration
+end
+
+function Movement.update(entity, dt, settings)
+    if entity.step then
+        Movement.retime(entity)
+        local step = entity.step
+        step.elapsed = math.min(step.duration, step.elapsed + dt)
+        local progress = step.elapsed / step.duration
+        entity.rx, entity.ry =
+            step.fromX + (entity.x - step.fromX) * progress,
+            step.fromY + (entity.y - step.fromY) * progress
+        entity.walkPhase = progress
+        if progress >= 1 - 1e-9 then
+            entity.rx, entity.ry = entity.x, entity.y
+            entity.step = nil
+            entity.gap = settings.stepGap or 0
         end
     else
-        e.gap=math.max(0,e.gap-dt)
+        entity.gap = math.max(0, entity.gap - dt)
     end
 end
 return Movement
